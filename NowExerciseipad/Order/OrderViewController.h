@@ -11,7 +11,7 @@
 @interface OrderViewController : UIViewController
 
 
-- (instancetype)init;
+//- (instancetype)init;
 
 
 @end

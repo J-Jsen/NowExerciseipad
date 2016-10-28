@@ -18,13 +18,13 @@
         _namelabel = [[UILabel alloc]init];
         
         _iconV.image = [UIImage imageNamed:@"icon.png"];
-        _iconV.layer.cornerRadius = 22.0;
+        _iconV.layer.cornerRadius = 17.0;
         _iconV.layer.masksToBounds = YES;
         
         
         _namelabel.text = @"未登录";
         _namelabel.textColor = [UIColor whiteColor];
-        _namelabel.font = [UIFont systemFontOfSize:17];
+        _namelabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
         
         [self addSubview:_iconV];
         [self addSubview:_namelabel];
@@ -37,31 +37,24 @@
 }
 #pragma mark masonry 布局
 - (void)createUI{
-    
-    
-    
-    __weak typeof (self) weakSelf = self;
+
 
     [_iconV mas_makeConstraints:^(MASConstraintMaker *make) {
     
-        make.top.mas_equalTo(0);
-        make.bottom.mas_equalTo(0);
+        make.top.offset(5.0);
+        make.height.mas_equalTo(34);
         make.left.mas_equalTo(0);
-        make.width.mas_equalTo(weakSelf.mas_height);
-        
+        make.width.mas_equalTo(34);
         
     }];
     [_namelabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(0);
         make.bottom.mas_equalTo(0);
         make.left.mas_equalTo(_iconV.mas_right).offset(5.0);
-        make.width.mas_equalTo(150 - 44);
-        
-        
+        make.width.mas_equalTo(120 - 44);
+   
     }];
-    
-    
-    
+
 }
 /*
 // Only override drawRect: if you perform custom drawing.

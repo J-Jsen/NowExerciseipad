@@ -7,7 +7,6 @@
 //
 
 #import "HttpRequest.h"
-#import "AFNetworking.h"
 @implementation HttpRequest
 
 
@@ -77,7 +76,7 @@
     
 }
 //post请求
-+ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *))progress andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
++ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
     
     AFHTTPSessionManager * manager = [HttpRequest sharemanager];
     

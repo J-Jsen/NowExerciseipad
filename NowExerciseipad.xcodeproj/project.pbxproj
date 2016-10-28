@@ -17,7 +17,6 @@
 		6311935F1DC039B600C18349 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6311935D1DC039B600C18349 /* LoginViewController.m */; };
 		631193601DC039B600C18349 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6311935E1DC039B600C18349 /* LoginViewController.xib */; };
 		631193641DC03A8000C18349 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 631193631DC03A8000C18349 /* Reachability.m */; };
-		631193841DC04B0B00C18349 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 631193681DC04B0B00C18349 /* LICENSE */; };
 		631193851DC04B0B00C18349 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 6311936B1DC04B0B00C18349 /* MASCompositeConstraint.m */; };
 		631193861DC04B0B00C18349 /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 6311936E1DC04B0B00C18349 /* MASConstraint.m */; };
 		631193871DC04B0B00C18349 /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 631193701DC04B0B00C18349 /* MASConstraintMaker.m */; };
@@ -28,7 +27,6 @@
 		6311938C1DC04B0B00C18349 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6311937D1DC04B0B00C18349 /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		6311938D1DC04B0B00C18349 /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6311937F1DC04B0B00C18349 /* View+MASAdditions.m */; };
 		6311938E1DC04B0B00C18349 /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 631193821DC04B0B00C18349 /* ViewController+MASAdditions.m */; };
-		6311938F1DC04B0B00C18349 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 631193831DC04B0B00C18349 /* README.md */; };
 		631193921DC04B9200C18349 /* NavView.m in Sources */ = {isa = PBXBuildFile; fileRef = 631193911DC04B9200C18349 /* NavView.m */; };
 		631193951DC04CA900C18349 /* iconBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 631193941DC04CA900C18349 /* iconBtn.m */; };
 		631193BE1DC063E600C18349 /* 10.png in Resources */ = {isa = PBXBuildFile; fileRef = 631193971DC063E600C18349 /* 10.png */; };
@@ -84,6 +82,9 @@
 		6330829B1DC1EC1300D67875 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 633082941DC1EC1300D67875 /* AFURLResponseSerialization.m */; };
 		6330829C1DC1EC1300D67875 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 633082961DC1EC1300D67875 /* AFURLSessionManager.m */; };
 		633082A51DC1EEE100D67875 /* HttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 633082A41DC1EEE100D67875 /* HttpRequest.m */; };
+		639473EB1DC33D2C00F53758 /* DetailOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 639473EA1DC33D2C00F53758 /* DetailOrderViewController.m */; };
+		639473F21DC35C3C00F53758 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 639473EE1DC35C3C00F53758 /* Base64.m */; };
+		639473F31DC35C3C00F53758 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 639473F11DC35C3C00F53758 /* NSString+MD5.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,7 +105,6 @@
 		631193621DC03A8000C18349 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		631193631DC03A8000C18349 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		631193661DC0422D00C18349 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		631193681DC04B0B00C18349 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		6311936A1DC04B0B00C18349 /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		6311936B1DC04B0B00C18349 /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
 		6311936C1DC04B0B00C18349 /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
@@ -130,7 +130,6 @@
 		631193801DC04B0B00C18349 /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
 		631193811DC04B0B00C18349 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		631193821DC04B0B00C18349 /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+MASAdditions.m"; sourceTree = "<group>"; };
-		631193831DC04B0B00C18349 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		631193901DC04B9200C18349 /* NavView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavView.h; sourceTree = "<group>"; };
 		631193911DC04B9200C18349 /* NavView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavView.m; sourceTree = "<group>"; };
 		631193931DC04CA900C18349 /* iconBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iconBtn.h; sourceTree = "<group>"; };
@@ -201,6 +200,13 @@
 		633082961DC1EC1300D67875 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
 		633082A31DC1EEE100D67875 /* HttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpRequest.h; sourceTree = "<group>"; };
 		633082A41DC1EEE100D67875 /* HttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpRequest.m; sourceTree = "<group>"; };
+		639473E91DC33D2C00F53758 /* DetailOrderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailOrderViewController.h; sourceTree = "<group>"; };
+		639473EA1DC33D2C00F53758 /* DetailOrderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailOrderViewController.m; sourceTree = "<group>"; };
+		639473ED1DC35C3C00F53758 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		639473EE1DC35C3C00F53758 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		639473EF1DC35C3C00F53758 /* NSString+Encryption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Encryption.h"; sourceTree = "<group>"; };
+		639473F01DC35C3C00F53758 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		639473F11DC35C3C00F53758 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +303,7 @@
 		631193611DC03A6F00C18349 /* Tool */ = {
 			isa = PBXGroup;
 			children = (
+				639473EC1DC35C3C00F53758 /* Encryption */,
 				633082891DC1EC1300D67875 /* AFNetworking */,
 				631193961DC063E600C18349 /* picture */,
 				631193671DC04B0B00C18349 /* Masonry */,
@@ -311,9 +318,7 @@
 		631193671DC04B0B00C18349 /* Masonry */ = {
 			isa = PBXGroup;
 			children = (
-				631193681DC04B0B00C18349 /* LICENSE */,
 				631193691DC04B0B00C18349 /* Masonry */,
-				631193831DC04B0B00C18349 /* README.md */,
 			);
 			path = Masonry;
 			sourceTree = "<group>";
@@ -403,6 +408,8 @@
 				631193F11DC07B3000C18349 /* OrderViewController.h */,
 				631193F21DC07B3000C18349 /* OrderViewController.m */,
 				631193F31DC07B3000C18349 /* OrderViewController.xib */,
+				639473E91DC33D2C00F53758 /* DetailOrderViewController.h */,
+				639473EA1DC33D2C00F53758 /* DetailOrderViewController.m */,
 				631193E61DC07A8000C18349 /* model */,
 				631193E71DC07A8000C18349 /* view */,
 			);
@@ -518,6 +525,18 @@
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
+		639473EC1DC35C3C00F53758 /* Encryption */ = {
+			isa = PBXGroup;
+			children = (
+				639473ED1DC35C3C00F53758 /* Base64.h */,
+				639473EE1DC35C3C00F53758 /* Base64.m */,
+				639473EF1DC35C3C00F53758 /* NSString+Encryption.h */,
+				639473F01DC35C3C00F53758 /* NSString+MD5.h */,
+				639473F11DC35C3C00F53758 /* NSString+MD5.m */,
+			);
+			path = Encryption;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -595,7 +614,6 @@
 				631193C71DC063E600C18349 /* 19.png in Resources */,
 				631193DC1DC063E600C18349 /* 6.png in Resources */,
 				631193CA1DC063E600C18349 /* 22.png in Resources */,
-				631193841DC04B0B00C18349 /* LICENSE in Resources */,
 				631193E21DC063E600C18349 /* icon.png in Resources */,
 				631194031DC0B04C00C18349 /* 1.png in Resources */,
 				631193BE1DC063E600C18349 /* 10.png in Resources */,
@@ -644,14 +662,15 @@
 				631193FE1DC07B7300C18349 /* PerformanceViewController.m in Sources */,
 				631193581DC0395D00C18349 /* MainViewController.m in Sources */,
 				631193641DC03A8000C18349 /* Reachability.m in Sources */,
-				6311938F1DC04B0B00C18349 /* README.md in Sources */,
 				6311938D1DC04B0B00C18349 /* View+MASAdditions.m in Sources */,
 				631193851DC04B0B00C18349 /* MASCompositeConstraint.m in Sources */,
+				639473EB1DC33D2C00F53758 /* DetailOrderViewController.m in Sources */,
 				633082A51DC1EEE100D67875 /* HttpRequest.m in Sources */,
 				631193891DC04B0B00C18349 /* MASViewAttribute.m in Sources */,
 				633082981DC1EC1300D67875 /* AFNetworkReachabilityManager.m in Sources */,
 				631193871DC04B0B00C18349 /* MASConstraintMaker.m in Sources */,
 				631193921DC04B9200C18349 /* NavView.m in Sources */,
+				639473F31DC35C3C00F53758 /* NSString+MD5.m in Sources */,
 				6311938B1DC04B0B00C18349 /* NSArray+MASAdditions.m in Sources */,
 				633082971DC1EC1300D67875 /* AFHTTPSessionManager.m in Sources */,
 				6311938E1DC04B0B00C18349 /* ViewController+MASAdditions.m in Sources */,
@@ -659,6 +678,7 @@
 				631193861DC04B0B00C18349 /* MASConstraint.m in Sources */,
 				631193F41DC07B3000C18349 /* OrderViewController.m in Sources */,
 				631193881DC04B0B00C18349 /* MASLayoutConstraint.m in Sources */,
+				639473F21DC35C3C00F53758 /* Base64.m in Sources */,
 				633082991DC1EC1300D67875 /* AFSecurityPolicy.m in Sources */,
 				6311935F1DC039B600C18349 /* LoginViewController.m in Sources */,
 				631193FB1DC07B5900C18349 /* TrainViewController.m in Sources */,

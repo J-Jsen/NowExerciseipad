@@ -18,7 +18,6 @@
 
 @property (nonatomic, strong) UIButton * LoginBtn;
 
-- (instancetype)init;
 
 
 @end

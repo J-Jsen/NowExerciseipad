@@ -10,7 +10,7 @@
 
 #import "MainViewController.h"
 #import "Reachability.h"
-
+#import "LoginViewController.h"
 @interface AppDelegate ()
 
 @end
@@ -44,7 +44,7 @@
     
    //***************************************************************************
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[MainViewController alloc]init]];
+    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[LoginViewController alloc]init]];
     [self.window setBackgroundColor:WINDOW_backgroundColor];
     [self.window makeKeyAndVisible];
     

@@ -58,13 +58,6 @@
      ];
 }
 
-//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-//    
-//    NSLog(@"123");
-//    
-//        [_mainV bringSubviewToFront:_orderVC.view];
-//
-//}
 #pragma mark 布局
 - (void)createUI{
     _navV = [[NavView alloc]init];
@@ -75,14 +68,21 @@
     _orderVC = [[OrderViewController alloc]init];
     _classVC = [[ClassViewController alloc]init];
     
-    
+   
     _OptionV = [[UIView alloc]init];
     _mainV = [[UIView alloc]init];
     _mainV.contentMode = UIViewContentModeScaleAspectFit;
     
-    [_mainV addSubview:_orderVC.view];
-    [_mainV addSubview:_classVC.view];
     
+    [_mainV addSubview:_orderVC.view];
+//  [_mainV addSubview:_classVC.view];
+    [_orderVC.view mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.and.left.and.bottom.and.right.mas_equalTo(0);
+        
+        
+        
+        
+    }];
     NSLog(@"");
     _OrderBtn = [[OptionBtn alloc]initWithName:@"订单" andWithImageName:@"5.png"];
     _ClassBtn = [[OptionBtn alloc]initWithName:@"课程" andWithImageName:@"6.png"];
@@ -111,9 +111,7 @@
     [self.view addSubview:_navV];
     [self.view addSubview:_mainV];
     [self.view addSubview:_OptionV];
-    
-    
-    
+ 
     _OrderBtn.tag = 100;
     _ClassBtn.tag = 200;
     _TrainBtn.tag = 300;
@@ -160,7 +158,7 @@
         
     }];
 
-    if ([[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortraitUpsideDown) {
+    if (ISSHUPING) {
         
         [_OptionV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
@@ -324,7 +322,7 @@
     }
     
     [[UIApplication sharedApplication] statusBarOrientation];
-    
+
     
     
     
@@ -352,8 +350,7 @@
     NSLog(@"转屏了");
     NSLog(@"%f",LEFT_OPTION_L);
     
-    
-    
+
 }
 
 - (void)changeUI{
@@ -547,7 +544,9 @@
             NSLog(@"无法辨识");
             break;
     }
-
+    
+//动画
+    [self screenChangAnimated];
     
     
 }
@@ -660,7 +659,7 @@
     }
         
     }else{
-//        btn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
+//btn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
         
         
         switch (btn.tag) {
@@ -668,13 +667,11 @@
             {
 
 
-                
-
-                
+            
                 
             }
                 break;
-            case 200:
+            case 200://课程
                 
 
 
@@ -682,12 +679,12 @@
                 
                 
                 break;
-            case 300:
+            case 300://培训
                 
 
                 
                 break;
-            case 400:
+            case 400://绩效
                 
                 
 
@@ -711,34 +708,32 @@
 
 - (void)MenuBtnclick:(UIButton *)btn{
     btn.selected = !btn.selected;
+    NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
     
     if (!btn.selected) {
-        [UIView animateWithDuration:2.0 animations:^{
-            [btn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
+        [self OpetionOut];
+        [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"出现"}];
 
-        }];
-          [self OpetionOut];
         
-        NSLog(@"出现");
+        NSLog(@"菜单出现");
         
     }else{
-        [UIView animateWithDuration:2.0 animations:^{
-            [btn setImage:[UIImage imageNamed:@"caidanclose.png"] forState:UIControlStateSelected];
-            
-        }];
+        [btn setImage:[UIImage imageNamed:@"caidanclose.png"] forState:UIControlStateSelected];
         [self Opetiondismiss];
-
+        [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"消失"}];
+        
+        NSLog(@"菜单消失");
         
     }
     
-    
+ 
     
     
 }
 
 #pragma mark 选项栏消失
 - (void)Opetiondismiss{
-    __weak typeof (self) weakSelf = self;
 
     [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(_navV.mas_bottom);
@@ -756,17 +751,21 @@
     }];
 
     
+    [self screenChangAnimated];
+    
+    
 }
 #pragma mark 选项栏出现
 
 - (void)OpetionOut{
     
-    if (ISHENGPING) {
+    if (ISSHUPING) {
+        
         [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
             make.left.mas_equalTo(0);
             make.bottom.mas_equalTo(0);
-            make.width.mas_equalTo(LEFT_OPTION_L / 3.0);
+            make.width.mas_equalTo(LEFT_OPTION_L);
             
         }];
         
@@ -777,44 +776,48 @@
             make.right.mas_equalTo(0);
         }];
         
-    }else{
-       
-    
-    
-    [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_navV.mas_bottom);
-        make.left.mas_equalTo(0);
-        make.bottom.mas_equalTo(0);
-        make.width.mas_equalTo(LEFT_OPTION_L);
-        
-    }];
-    
-    [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_navV.mas_bottom);
-        make.left.mas_equalTo(_OptionV.mas_right);
-        make.bottom.mas_equalTo(0);
-        make.right.mas_equalTo(0);
-    }];
-    
-    
+           }else{
+
+        [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(_navV.mas_bottom);
+            make.left.mas_equalTo(0);
+            make.bottom.mas_equalTo(0);
+            make.width.mas_equalTo(LEFT_OPTION_L / 3.0);
+        }];
+               
+        [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(_navV.mas_bottom);
+            make.left.mas_equalTo(_OptionV.mas_right);
+            make.bottom.mas_equalTo(0);
+            make.right.mas_equalTo(0);
+        }];
+               
+
     }
 
-    
+    [self screenChangAnimated];
     
 }
 
 - (void)dealloc{
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
-    
-    
-    
+
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+#pragma mark 添加转屏动画
+- (void)screenChangAnimated{
+    [self.view setNeedsUpdateConstraints];
+    [self.view updateFocusIfNeeded];
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.view layoutIfNeeded];
+        
+    }];
+}
 /*
 #pragma mark - Navigation
 

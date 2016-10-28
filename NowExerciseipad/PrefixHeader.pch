@@ -11,26 +11,37 @@
 
 
 //背景颜色
-#define WINDOW_backgroundColor [UIColor colorWithRed:31.0f / 255.0f green:43.0f/255.0 blue:57.0/255.0 alpha:1]
+#define WINDOW_backgroundColor               [UIColor colorWithRed:31.0f / 255.0f green:43.0f/255.0f blue:57.0/255.0f alpha:1]
 //分割线颜色
-#define LINE_COLOR             [UIColor colorWithRed:28.0f / 255.0f green:38.0f/255.0 blue:50.0/255.0 alpha:1]
+#define LINE_COLOR                           [UIColor colorWithRed:28.0f / 255.0f green:38.0f/255.0f blue:50.0/255.0f alpha:1]
 
 //左侧按钮背景颜色
-#define LEFTBTN_BACKGROUNDCOLOR             [UIColor colorWithRed:14.0f / 255.0f green:19.0f/255.0 blue:25.0/255.0 alpha:1]
+#define LEFTBTN_BACKGROUNDCOLOR              [UIColor colorWithRed:14.0f / 255.0f green:19.0f/255.0f blue:25.0/255.0f alpha:1]
 ////左侧按文字景颜色
-#define LEFTBTNTEXT_BACKGROUNDCOLOR             [UIColor colorWithRed:28.0f / 255.0f green:38.0f/255.0 blue:50.0/255.0 alpha:1]
+#define LEFTBTNTEXT_BACKGROUNDCOLOR          [UIColor colorWithRed:28.0f / 255.0f green:38.0f/255.0f blue:50.0/255.0f alpha:1]
+//搜索框颜色 字体颜色
+#define SEARCHTF_TEXT_BORDY_COLOR            [UIColor colorWithRed:22.0f / 255.0f green:33.0f/255.0f blue:42.0/255.0f alpha:1]
+//登录界面控件颜色
+#define LOGINVIEW_COLEOR                     [UIColor colorWithRed:198.0f / 255.0f green:188.0f/255.0f blue:193.0f/255.0f alpha:1]
 
-#define ISHENGPING  [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortraitUpsideDown
+#define ISSHUPING  [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortraitUpsideDown
 
 #define UISCREEN_H             [UIScreen mainScreen].bounds.size.height
 #define UISCREEN_W             [UIScreen mainScreen].bounds.size.width
 
 //左边选项的宽高
 #define LEFT_OPTION_L          (UISCREEN_H - 84 -3) / 4.0
+//网址
+#define BASEURL @"http://www.guodongwl.com:8065/"
+
+
+
+
 
 
 #import "Masonry.h"
 #import "HttpRequest.h"
+#import "NSString+Encryption.h"
 
 
 
