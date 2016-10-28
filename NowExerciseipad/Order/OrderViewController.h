@@ -10,4 +10,8 @@
 
 @interface OrderViewController : UIViewController
 
+
+- (instancetype)init;
+
+
 @end

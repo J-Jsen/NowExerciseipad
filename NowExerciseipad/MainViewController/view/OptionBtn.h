@@ -10,7 +10,6 @@
 
 
 
-@end
 
 @interface OptionBtn : UIButton
 
@@ -18,6 +17,8 @@
 @property (nonatomic , strong) UIImageView * imageV;
 
 @property (nonatomic , strong) UILabel * Classtitlelabel;
+
+
 
 - (instancetype)initWithName:(NSString *)name andWithImageName:(NSString *)imageName;
 

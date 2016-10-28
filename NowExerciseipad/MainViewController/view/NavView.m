@@ -19,18 +19,19 @@
         _searchBtn = [[UIButton alloc]init];
         _messageBtn = [[UIButton alloc]init];
         
-        _menuBtn.backgroundColor = [UIColor redColor];
+//        _menuBtn.backgroundColor = [UIColor redColor];
         _IconBtn.backgroundColor = [UIColor greenColor];
         _searchTF.backgroundColor = [UIColor whiteColor];
         _searchBtn.backgroundColor = [UIColor yellowColor];
 //        _messageBtn.backgroundColor = [UIColor blueColor];
        
         [_messageBtn setImage:[UIImage imageNamed:@"message.png"] forState:UIControlStateNormal];
+        [_menuBtn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
         
         
+        _menuBtn.imageView.contentMode = UIViewContentModeLeft;
         
-        
-        
+
         [self addSubview:_menuBtn];
         [self addSubview:_IconBtn];
         [self addSubview:_searchBtn];
@@ -38,8 +39,6 @@
         [self addSubview:_messageBtn];
         
         [self createUI];
-        [_menuBtn addTarget:self action:@selector(btnclick:) forControlEvents:UIControlEventTouchUpInside];
-        
 
     }
     
@@ -53,9 +52,9 @@
     //菜单
     [_menuBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(weakSelf.mas_top).offset(30.0);
-        make.left.mas_equalTo(weakSelf.mas_left).offset(10.0);
+        make.left.mas_equalTo(weakSelf.mas_left).offset(20.0);
         make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-10.0);
-        make.width.mas_equalTo(44);
+        make.width.mas_equalTo(54);
 
     }];
     //搜索框
@@ -71,8 +70,8 @@
     [_IconBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(weakSelf.mas_top).offset(30.0);
         make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-10.0);
-        make.left.mas_equalTo(_menuBtn.mas_right).offset(UISCREEN_W / 12.0);
-        make.right.mas_equalTo(_searchTF.mas_left).offset(-25.0);
+        make.left.mas_equalTo(_menuBtn.mas_right).offset(UISCREEN_W / 15.0);
+        make.width.mas_equalTo(150.0);
         
     }];
 
@@ -97,13 +96,6 @@
     }];
 }
 
-- (void)btnclick:(UIButton *)btn{
-    
-    
-    
-    NSLog(@"12112饿33而且案发0");
-    
-}
 
 /*
 // Only override drawRect: if you perform custom drawing.

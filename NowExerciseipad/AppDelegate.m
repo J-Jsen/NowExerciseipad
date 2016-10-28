@@ -39,7 +39,7 @@
 
     //横竖屏通知
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-
+   
     
     
    //***************************************************************************
