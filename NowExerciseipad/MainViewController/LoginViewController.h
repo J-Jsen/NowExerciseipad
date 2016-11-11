@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol Logindelegate <NSObject>
+
+- (void)LoginSuecces;
+
+@end
+
+
 @interface LoginViewController : UIViewController
 
 @property (nonatomic , strong) UIImageView * iconImageV;
@@ -18,6 +25,7 @@
 
 @property (nonatomic, strong) UIButton * LoginBtn;
 
+@property (nonatomic , assign) id<Logindelegate> delegate;
 
 
 @end

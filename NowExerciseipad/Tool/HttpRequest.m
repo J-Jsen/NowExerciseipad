@@ -14,7 +14,7 @@
     static AFHTTPSessionManager *sharemanager = nil;
              static dispatch_once_t predicate;
             dispatch_once(&predicate, ^{
-                        sharemanager = [[self alloc] init];
+                        sharemanager = [AFHTTPSessionManager manager];
                 });
     
     sharemanager.requestSerializer.timeoutInterval = 10;
@@ -56,11 +56,12 @@
 //    
 //}
 //get请求
-+ (void)GetHttpwithUrl:(NSString *)url parameters:(NSDictionary *)parameters andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
++ (void)GetHttpwithUrl:(NSString *)url parameters:(NSDictionary *)parameters andsuccessBlock:(void(^)(id data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
     
             // 1.创建管理者对象
         AFHTTPSessionManager * manager = [HttpRequest sharemanager];
-
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
 [manager GET:url parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
    
 } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -76,11 +77,23 @@
     
 }
 //post请求
-+ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
++ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(id data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
     
     AFHTTPSessionManager * manager = [HttpRequest sharemanager];
+//    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+
+//    [manager POST:url parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+//        
+//    } progress:^(NSProgress * _Nonnull uploadProgress) {
+//        progress(uploadProgress);
+//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//        successBlock(responseObject);
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        failBlock(error);
+//    }];
+//    
     
-    [manager POST:url parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {
+    [manager POST:url parameters:nil progress:^(NSProgress * _Nonnull uploadProgress) {
         progress(uploadProgress);
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -98,6 +111,20 @@
 //上传本地文件
 //+ (void)Postlocalfilewithurl:(NSString *)url andparameters:(NSDictionary *)parameters and
 
+
++ (void)showAlertCatController:(UIViewController *)viewcontroller andmessage:(NSString *)message{
+    
+    
+    UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+    
+    [alertC addAction:action];
+    
+    [viewcontroller presentViewController:alertC animated:YES completion:nil];
+    
+    
+}
 
 
 

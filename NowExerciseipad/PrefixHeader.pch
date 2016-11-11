@@ -24,28 +24,41 @@
 //登录界面控件颜色
 #define LOGINVIEW_COLEOR                     [UIColor colorWithRed:198.0f / 255.0f green:188.0f/255.0f blue:193.0f/255.0f alpha:1]
 
+#define WENDA_COLOR                          [UIColor colorWithRed:186.0f / 255.0f green:143.0f/255.0f blue:97.0f/255.0f alpha:1]
+
+
 #define ISSHUPING  [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortraitUpsideDown
+#define ISHENGPING  [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationLandscapeLeft || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationLandscapeRight
 
 #define UISCREEN_H             [UIScreen mainScreen].bounds.size.height
 #define UISCREEN_W             [UIScreen mainScreen].bounds.size.width
 
 //左边选项的宽高
 #define LEFT_OPTION_L          (UISCREEN_H - 84 -3) / 4.0
+
+#define WEN_JIANGE_L 10
 //网址
 #define BASEURL @"http://www.guodongwl.com:8065/"
+#define TESTBASEURL @"http://192.168.1.5/"
 
+#define Stringproperty(x) @property (nonatomic , copy) NSString * x;
 
+#define Intagerproperty(x) @property (nonatomic , assign) NSInteger  x;
 
+#define Boolproperty(x) @property (nonatomic , assign) BOOL  x;
 
+#define Arrayproperty(x) @property (nonatomic , strong) NSMutableArray * x;
 
+#define Dictionaryproperty(x) @property (nonatomic , strong) NSMutableDictionary * x;
 
 #import "Masonry.h"
 #import "HttpRequest.h"
 #import "NSString+Encryption.h"
+#import "UIKit+AFNetworking.h"
 
-
-
-
+#import "xuanzeBTN.h"
+#import "Mytextfield.h"
+#import "Mylabel.h"
 
 
 // Include any system framework and library headers here that should be included in all compilation units.

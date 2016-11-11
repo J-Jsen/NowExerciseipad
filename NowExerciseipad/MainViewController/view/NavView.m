@@ -25,7 +25,7 @@
         _searchTF.borderStyle = UITextBorderStyleBezel;
         _searchTF.layer.borderWidth = 2.0;
         _searchTF.layer.borderColor = SEARCHTF_TEXT_BORDY_COLOR.CGColor;
-        _searchTF.layer.cornerRadius = 22.0;
+        _searchTF.layer.cornerRadius = 17.0;
         _searchTF.layer.masksToBounds = YES;
         _searchTF.textColor = [UIColor whiteColor];
         
@@ -72,10 +72,10 @@
     }];
     //搜索框
     [_searchTF mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(weakSelf.mas_top).offset(30.0);
-        make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-10.0);
-        make.centerX.mas_equalTo(-24);
-        make.width.mas_equalTo(UISCREEN_W / 5.0);
+        make.top.mas_equalTo(weakSelf.mas_top).offset(35.0);
+        make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-15.0);
+        make.centerX.mas_equalTo(-14);
+        make.width.mas_equalTo(200);
         
         
     }];
@@ -90,10 +90,10 @@
 
     //搜索按钮
     [_searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(weakSelf.mas_top).offset(30.0);
-        make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-10.0);
+        make.top.mas_equalTo(weakSelf.mas_top).offset(35.0);
+        make.bottom.mas_equalTo(weakSelf.mas_bottom).offset(-15.0);
         make.left.mas_equalTo(_searchTF.mas_right).offset(4);
-        make.width.mas_equalTo(44);
+        make.width.mas_equalTo(34);
         
         
     }];

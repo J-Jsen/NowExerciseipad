@@ -163,29 +163,71 @@
 #pragma mark 登录按钮
 - (void)Btnclick:(UIButton *)btn{
     
-    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",BASEURL,_nameTF.text,[_passwordTF.text MD5]];
-
-    
-    
+    if (_nameTF.text.length != 0 && _passwordTF.text.length != 0) {
+        NSLog(@"%@*********%@",_nameTF.text,_passwordTF.text);
+        
+    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",TESTBASEURL,_nameTF.text,[_passwordTF.text MD5]];
+        NSLog(@"%@",url);
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:^(NSProgress * progress) {
         
         
         
-    } andsuccessBlock:^(NSData *data) {
+    } andsuccessBlock:^(id data) {
         if (data) {
+            NSLog(@"数据:%@",data);
+            NSDictionary * dic = (NSDictionary *)data;
+            
+            NSInteger rc = [[dic valueForKey:@"rc"] integerValue];
+            NSString * msg = dic[@"msg"];
+            if (rc == 0) {
+                
+                NSUserDefaults * user = [NSUserDefaults standardUserDefaults];
+                [user setValue:_nameTF.text forKey:@"name"];
+                [user setValue:_passwordTF.text forKey:@"mima"];
+                
+                [self.delegate LoginSuecces];
+                [self dismissViewControllerAnimated:YES completion:nil];
+                
+                
+            }else{
+                
+                UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+                [alertC addAction:action];
+                
+                [self presentViewController:alertC animated:YES completion:nil];
+                
+                
+                
+            }
             
         }
         
         
     } andfailBlock:^(NSError *error) {
         
+        UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+        [alertC addAction:action];
         
+        [self presentViewController:alertC animated:YES completion:nil];
         
+
         
     }];
     
     
-    
+    }else{
+        
+        UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"账号和密码不能为空" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+        [alertC addAction:action];
+        
+        [self presentViewController:alertC animated:YES completion:nil];
+        
+ 
+        
+    }
     
     
     
@@ -200,7 +242,8 @@
 -(void)dealloc{
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
-
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    
 }
 /*
 #pragma mark - Navigation

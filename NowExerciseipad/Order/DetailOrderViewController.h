@@ -10,4 +10,16 @@
 
 @interface DetailOrderViewController : UIViewController
 
+@property (nonatomic , strong) NSString * orderID;
+
+@property (nonatomic , assign) BOOL isopen;
+
+//@property (nonatomic , assign) NSInteger status;
+@property (nonatomic , assign) BOOL isdone;
+
+
+- (void)createview;
+
+
+
 @end

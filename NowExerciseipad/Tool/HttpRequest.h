@@ -17,13 +17,11 @@
 
 @interface HttpRequest : NSObject
 
-+ (void)GetHttpwithUrl:(NSString *)url parameters:(NSDictionary *)parameters andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock;
++ (void)GetHttpwithUrl:(NSString *)url parameters:(NSDictionary *)parameters andsuccessBlock:(void(^)(id data))successBlock andfailBlock:(void(^)(NSError * error))failBlock;
 
 
-+ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(NSData * data))successBlock andfailBlock:(void(^)(NSError * error))failBlock;
++ (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(id data))successBlock andfailBlock:(void(^)(NSError * error))failBlock;
 
-
-
-
++ (void)showAlertCatController:(UIViewController *)viewcontroller andmessage:(NSString *)message;
 
 @end

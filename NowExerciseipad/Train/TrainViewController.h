@@ -10,4 +10,5 @@
 
 @interface TrainViewController : UIViewController
 
+@property (nonatomic , assign) BOOL islook;
 @end

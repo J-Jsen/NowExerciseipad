@@ -12,7 +12,7 @@
 #import "OptionBtn.h"
 #import "ClassViewController.h"
 #import "OrderViewController.h"
-
+#import "TrainViewController.h"
 
 @interface MainViewController ()<NavViewdelegate>
 
@@ -33,6 +33,8 @@
 
 @property (nonatomic , strong) OrderViewController * orderVC;
 @property (nonatomic , strong) ClassViewController * classVC;
+@property (nonatomic , strong) TrainViewController * trainVC;
+@property (nonatomic , assign) BOOL isopen;
 
 @end
 
@@ -40,8 +42,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = WINDOW_backgroundColor;
+    _isopen = YES;
     
+    self.view.backgroundColor = WINDOW_backgroundColor;
+    self.navigationController.navigationBarHidden = YES;
     [self createUI];
     
     
@@ -66,7 +70,6 @@
     [_navV.menuBtn addTarget:self action:@selector(MenuBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     
     _orderVC = [[OrderViewController alloc]init];
-    _classVC = [[ClassViewController alloc]init];
     
    
     _OptionV = [[UIView alloc]init];
@@ -75,21 +78,20 @@
     
     
     [_mainV addSubview:_orderVC.view];
-//  [_mainV addSubview:_classVC.view];
-    [_orderVC.view mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.and.left.and.bottom.and.right.mas_equalTo(0);
-        
-        
-        
-        
-    }];
-    NSLog(@"");
+//    [_orderVC.view mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.and.left.and.bottom.and.right.mas_equalTo(0);
+//  
+//        
+//    }];
+
     _OrderBtn = [[OptionBtn alloc]initWithName:@"订单" andWithImageName:@"5.png"];
     _ClassBtn = [[OptionBtn alloc]initWithName:@"课程" andWithImageName:@"6.png"];
     _TrainBtn = [[OptionBtn alloc]initWithName:@"培训" andWithImageName:@"1.png"];
     _PerformanceBtn = [[OptionBtn alloc]initWithName:@"绩效" andWithImageName:@"7.png"];
     
-    
+    _OrderBtn.selected = YES;
+    _OrderBtn.imageV.image = [UIImage imageNamed:@"16.png"];
+    _OrderBtn.titleLabel.textColor = [UIColor orangeColor];
 
     //分割线
     
@@ -234,12 +236,8 @@
             make.height.mas_equalTo(LEFT_OPTION_L);
             
         }];
-        
-
-        
-        
-        
-    }else{
+   
+    }else if(ISHENGPING){
         //左方选项
         [_OptionV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
@@ -323,10 +321,6 @@
     
     [[UIApplication sharedApplication] statusBarOrientation];
 
-    
-    
-    
-    
 }
 
 #pragma mark 通知的处理
@@ -343,56 +337,151 @@
         }];
     
     [self changeUI];
-    
-    
-    
-    
+
     NSLog(@"转屏了");
-    NSLog(@"%f",LEFT_OPTION_L);
     
 
 }
 
 - (void)changeUI{
     
-    UIDevice *device = [UIDevice currentDevice];
-    
-    switch (device.orientation) {
-        case UIDeviceOrientationFaceUp:
-            NSLog(@"屏幕朝上平躺");
-            
-            
-            break;
-            
-        case UIDeviceOrientationFaceDown:
-            NSLog(@"屏幕朝下平躺");
-            break;
-            
-            //系統無法判斷目前Device的方向，有可能是斜置
-        case UIDeviceOrientationUnknown:
-            NSLog(@"未知方向");
-            break;
-            
-        case UIDeviceOrientationLandscapeLeft://屏幕向左横置
-        case UIDeviceOrientationLandscapeRight://屏幕向右橫置
-        {
-            
-            [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_navV.mas_bottom);
-                make.left.mas_equalTo(0);
-                make.bottom.mas_equalTo(0);
-                make.width.mas_equalTo(LEFT_OPTION_L);
+    if (ISHENGPING) {
+        
+            if (_isopen) {
+                [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(0);
+                    make.bottom.mas_equalTo(0);
+                    make.width.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
                 
-            }];
+                [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(_OptionV.mas_right);
+                    make.bottom.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                }];
+            }else{
+                [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.offset(-LEFT_OPTION_L);
+                    make.bottom.mas_equalTo(0);
+                    make.width.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
+                
+                [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(_OptionV.mas_right);
+                    make.bottom.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                }];
+                
+                
+
+               
+            }
             
-            [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_navV.mas_bottom);
-                make.left.mas_equalTo(_OptionV.mas_right);
-                make.bottom.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-            }];
+                //**************************分别布局********************
+                
+                [_OrderBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(0);
+                    make.left.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                    make.height.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
+                
+                [_line1 mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_OrderBtn.mas_bottom);
+                    make.left.mas_equalTo(2);
+                    make.right.mas_equalTo(-2);
+                    make.height.mas_equalTo(1);
+                    
+                }];
+                
+                [_ClassBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+                    
+                    make.top.mas_equalTo(_line1.mas_bottom);
+                    make.left.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                    make.height.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
+                
+                [_line2 mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_ClassBtn.mas_bottom);
+                    make.left.mas_equalTo(2);
+                    make.right.mas_equalTo(-2);
+                    make.height.mas_equalTo(1);
+                    
+                }];
+                
+                [_TrainBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_line2.mas_bottom);
+                    make.left.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                    make.height.mas_equalTo(LEFT_OPTION_L);
+                    
+                    
+                }];
+                [_line3 mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_TrainBtn.mas_bottom);
+                    make.left.mas_equalTo(2);
+                    make.right.mas_equalTo(-2);
+                    make.height.mas_equalTo(1);
+                    
+                }];
+                
+                [_PerformanceBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_line3.mas_bottom);
+                    make.left.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                    make.height.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
+
+
             
-            
+        }else if(ISSHUPING){
+            if (_isopen) {
+                [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(0);
+                    make.bottom.mas_equalTo(0);
+                    make.width.mas_equalTo(LEFT_OPTION_L / 3.0);
+                    
+                }];
+                
+                [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(_OptionV.mas_right);
+                    make.bottom.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                }];
+                
+                
+
+            }else{
+                [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.offset(-LEFT_OPTION_L);
+                    make.bottom.mas_equalTo(0);
+                    make.width.mas_equalTo(LEFT_OPTION_L);
+                    
+                }];
+                
+                [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.mas_equalTo(_navV.mas_bottom);
+                    make.left.mas_equalTo(_OptionV.mas_right);
+                    make.bottom.mas_equalTo(0);
+                    make.right.mas_equalTo(0);
+                }];
+                
+                
+
+            }
             //**************************分别布局********************
             
             [_OrderBtn mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -452,97 +541,7 @@
                 
             }];
             
-        }
-            break;
             
-        case UIDeviceOrientationPortrait://屏幕直立
-        case UIDeviceOrientationPortraitUpsideDown://屏幕直立，上下顛倒
-        {
-            
-            [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_navV.mas_bottom);
-                make.left.mas_equalTo(0);
-                make.bottom.mas_equalTo(0);
-                make.width.mas_equalTo(LEFT_OPTION_L / 3.0);
-                
-            }];
-            
-            [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_navV.mas_bottom);
-                make.left.mas_equalTo(_OptionV.mas_right);
-                make.bottom.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-            }];
-            
-            
-            //**************************分别布局********************
-            
-            [_OrderBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(0);
-                make.left.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-                make.height.mas_equalTo(LEFT_OPTION_L);
-                
-            }];
-            
-            [_line1 mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_OrderBtn.mas_bottom);
-                make.left.mas_equalTo(2);
-                make.right.mas_equalTo(-2);
-                make.height.mas_equalTo(1);
-                
-            }];
-            
-            [_ClassBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                
-                make.top.mas_equalTo(_line1.mas_bottom);
-                make.left.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-                make.height.mas_equalTo(LEFT_OPTION_L);
-                
-            }];
-            
-            [_line2 mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_ClassBtn.mas_bottom);
-                make.left.mas_equalTo(2);
-                make.right.mas_equalTo(-2);
-                make.height.mas_equalTo(1);
-                
-            }];
-            
-            [_TrainBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_line2.mas_bottom);
-                make.left.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-                make.height.mas_equalTo(LEFT_OPTION_L);
-                
-                
-            }];
-            [_line3 mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_TrainBtn.mas_bottom);
-                make.left.mas_equalTo(2);
-                make.right.mas_equalTo(-2);
-                make.height.mas_equalTo(1);
-                
-            }];
-            
-            [_PerformanceBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(_line3.mas_bottom);
-                make.left.mas_equalTo(0);
-                make.right.mas_equalTo(0);
-                make.height.mas_equalTo(LEFT_OPTION_L);
-                
-            }];
-            
-            
-            
-        }
-            
-            break;
-            
-        default:
-            NSLog(@"无法辨识");
-            break;
     }
     
 //动画
@@ -553,24 +552,15 @@
 #pragma 左方选项点击事件
 - (void)btnclick:(OptionBtn *)btn{
     NSLog(@"点击了");
-    
-    
-    
     NSArray * Btnarr = [NSArray arrayWithObjects:_OrderBtn,_ClassBtn,_TrainBtn,_PerformanceBtn,nil];
     OptionBtn * optionbtn = [[OptionBtn alloc]init];
-    
-
     if (!btn.isSelected) {
-  
-     btn.Classtitlelabel.textColor = [UIColor orangeColor];
-    
-    
+    btn.Classtitlelabel.textColor = [UIColor orangeColor];
     switch (btn.tag) {
         case 100://点击了订单按钮
         {
             btn.imageV.image = [UIImage imageNamed:@"16.png"];
            
-            
             _ClassBtn.imageV.image = [UIImage imageNamed:@"6.png"];
             _TrainBtn.imageV.image = [UIImage imageNamed:@"1.png"];
             _PerformanceBtn.imageV.image = [UIImage imageNamed:@"7.png"];
@@ -585,12 +575,13 @@
                 }
                 
             }
+            [_mainV bringSubviewToFront:_orderVC.view];
             
             
         }
             break;
-        case 200:
-            
+        case 200://课程
+        {
             btn.imageV.image = [UIImage imageNamed:@"9.png"];
 
             _OrderBtn.imageV.image = [UIImage imageNamed:@"5.png"];
@@ -606,9 +597,15 @@
                 }
                 
             }
-            
+            if (_classVC) {
+                [_mainV bringSubviewToFront:_classVC.view];
+            }else{
+            _classVC = [[ClassViewController alloc]init];
+            _classVC.islook = _isopen;
+            [_mainV addSubview:_classVC.view];
+            }
 
-            
+        }
             break;
         case 300:
             
@@ -627,8 +624,14 @@
                 }
                 
             }
-            
-
+            if (_trainVC) {
+                [_mainV bringSubviewToFront:_trainVC.view];
+                
+            }else{
+                _trainVC = [[TrainViewController alloc]init];
+                _trainVC.islook = _isopen;
+                [_mainV addSubview:_trainVC.view];
+            }
             
             
             break;
@@ -672,6 +675,7 @@
             }
                 break;
             case 200://课程
+                btn.selected = NO;
                 
 
 
@@ -712,21 +716,21 @@
     
     if (!btn.selected) {
         [btn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
-        [self OpetionOut];
         [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"出现"}];
-
+        _isopen = YES;
         
         NSLog(@"菜单出现");
         
     }else{
         [btn setImage:[UIImage imageNamed:@"caidanclose.png"] forState:UIControlStateSelected];
-        [self Opetiondismiss];
         [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"消失"}];
+        _isopen = NO;
         
         NSLog(@"菜单消失");
         
     }
-    
+    [self handleDeviceOrientationDidChange:[[UIApplication sharedApplication] statusBarOrientation]];
+
  
     
     
@@ -760,30 +764,32 @@
 - (void)OpetionOut{
     
     if (ISSHUPING) {
-        
-        [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(_navV.mas_bottom);
-            make.left.mas_equalTo(0);
-            make.bottom.mas_equalTo(0);
-            make.width.mas_equalTo(LEFT_OPTION_L);
-            
-        }];
-        
-        [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(_navV.mas_bottom);
-            make.left.mas_equalTo(_OptionV.mas_right);
-            make.bottom.mas_equalTo(0);
-            make.right.mas_equalTo(0);
-        }];
-        
-           }else{
-
         [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
             make.left.mas_equalTo(0);
             make.bottom.mas_equalTo(0);
             make.width.mas_equalTo(LEFT_OPTION_L / 3.0);
         }];
+        
+        [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(_navV.mas_bottom);
+            make.left.mas_equalTo(_OptionV.mas_right);
+            make.bottom.mas_equalTo(0);
+            make.right.mas_equalTo(0);
+        }];
+        
+        
+        
+           }else if(ISHENGPING){
+
+      
+        [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(_navV.mas_bottom);
+            make.left.mas_equalTo(0);
+            make.bottom.mas_equalTo(0);
+            make.width.mas_equalTo(LEFT_OPTION_L);
+                   
+        }];
                
         [_mainV mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
@@ -791,8 +797,6 @@
             make.bottom.mas_equalTo(0);
             make.right.mas_equalTo(0);
         }];
-               
-
     }
 
     [self screenChangAnimated];

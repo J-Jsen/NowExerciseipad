@@ -10,4 +10,7 @@
 
 @interface ClassViewController : UIViewController
 
+@property (nonatomic , assign) BOOL islook;
+
+
 @end

@@ -11,7 +11,7 @@
 #import "MainViewController.h"
 #import "Reachability.h"
 #import "LoginViewController.h"
-@interface AppDelegate ()
+@interface AppDelegate ()<Logindelegate>
 
 @end
 
@@ -31,11 +31,9 @@
     Reachability *reach = [Reachability reachabilityWithHostName:@"www.guodongwl.com"];
     
     [reach startNotifier];
-    
-    
-    
-    NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
-    NSLog(@"APNS   %@",remoteNotification);
+
+//    NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
+//    NSLog(@"APNS   %@",remoteNotification);
 
     //横竖屏通知
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -44,14 +42,64 @@
     
    //***************************************************************************
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[LoginViewController alloc]init]];
+    
+    LoginViewController * login = [[LoginViewController alloc]init];
+    
+    login.delegate = self;
+    UIViewController * viewc = [[UIViewController alloc]init];
+    _window.rootViewController = viewc;
+    
+    
+    NSUserDefaults * userdefult = [NSUserDefaults standardUserDefaults];
+    NSString * name = [userdefult valueForKey:@"name"];
+    NSString * mima = [userdefult valueForKey:@"mima"];
+    NSLog(@"mingzi%@",name);
+    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",TESTBASEURL,name,[mima MD5]];
+    NSLog(@"%@",url);
+    if (name.length != 0 && mima.length != 0) {
+        [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+            if (data) {
+                NSDictionary * dict = data;
+                
+                NSInteger rc = [[dict valueForKey:@"rc"] integerValue];
+                
+                if (rc == 0) {
+                    _window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[MainViewController alloc]init]];
+                    
+                    
+                }else{
+                    
+                    _window.rootViewController = login;
+                    
+                }
+            }
+        } andfailBlock:^(NSError *error) {
+          
+            UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"温馨提示" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+            
+            
+            [alert addAction: [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                
+            }]];
+            
+            _window.rootViewController = login;
+            
+            [_window.rootViewController presentViewController:alert animated:YES completion:nil];
+
+        }];
+        
+    }else{
+        
+    self.window.rootViewController = login;
+    }
     [self.window setBackgroundColor:WINDOW_backgroundColor];
     [self.window makeKeyAndVisible];
     
     //统一设置导航栏隐藏
-    UINavigationBar * appearance = [UINavigationBar appearance];
-    appearance.hidden = YES;
-    
+//    UINavigationBar * appearance = [UINavigationBar appearance];
+//    
+//    appearance.hidden = YES;
+//    
     
     
     
@@ -78,14 +126,16 @@
 //#endif
 
     
-
-    
-    
-    
-    
     
     // Override point for customization after application launch.
     return YES;
+}
+#pragma mark 登陆代理方法
+-(void) LoginSuecces{
+    
+    _window.rootViewController = [[UINavigationController alloc]initWithRootViewController: [[MainViewController alloc]init]];
+ 
+    
 }
 #pragma mark 实现网络监控方法
 -(void)reachabilityChanged:(NSNotification *)notification
@@ -101,7 +151,7 @@
             case 0:
             {
                 
-                UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"网络连接中断" preferredStyle:UIAlertControllerStyleActionSheet];
+                UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"网络连接中断" preferredStyle:UIAlertControllerStyleAlert];
                 
               
                 [alert addAction: [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -109,7 +159,8 @@
                 }]];
                 
                 
-               
+                [_window.rootViewController presentViewController:alert animated:YES completion:nil];
+                
                 
             }
                 break;

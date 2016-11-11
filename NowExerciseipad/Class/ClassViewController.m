@@ -7,28 +7,444 @@
 //
 
 #import "ClassViewController.h"
+#import "ClassModel.h"
+#import "ClassCell.h"
+#import "FenLeiButton.h"
+#import "FenleiView.h"
+@interface ClassViewController ()<UITableViewDelegate,UITableViewDataSource,FenLeidelegate>
 
-@interface ClassViewController ()
+@property (nonatomic , strong) UIView * Backgroundview;
+@property (nonatomic , strong) UIView * HeaderView;
+@property (nonatomic , strong) FenleiView * fenleiV;
 
+@property (nonatomic , strong) UITableView * tableV;
+
+@property (nonatomic , strong) ClassCell * lastcell;
+@property (nonatomic , strong) NSIndexPath * lastindexpath;
+
+@property (nonatomic , strong) UITextView * TextV;
+
+
+Arrayproperty(daraArr)
+Arrayproperty(FenLeiArr)
+Arrayproperty(deleteFenleiArr)
 @end
 
 @implementation ClassViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleDeviceOrientationDidChange:)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil
+     ];
     
-    
-    self.view.backgroundColor = [UIColor redColor];
-    
+    //菜单栏出现消失通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menunoti:) name:@"xuanxiang" object:nil];
+
+    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    _daraArr = [NSMutableArray array];
+    self.view.layer.masksToBounds = YES;
+    _deleteFenleiArr = [NSMutableArray array];
+    [self createUI];
+    [self createRect];
+    [self loadData];
+
     
     // Do any additional setup after loading the view.
 }
+- (void)loadData{
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.my_training",TESTBASEURL];
+    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+        if (data && [data[@"rc"] integerValue] == 0) {
+           NSArray * datarr = data[@"data"];
+            
+            for (NSDictionary * dic in datarr) {
+                ClassModel * model = [[ClassModel alloc]init];
+                model.icon = [dic valueForKey:@"icon"];
+                model.train_type = [dic valueForKey:@"train_type"];
+                model.plan = [dic valueForKey:@"plan"];
+                NSLog(@"%@",model.icon);
+                [_daraArr addObject:model];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_tableV reloadData];
+            });
+        }else if(data[@"msg"]){
+            [HttpRequest showAlertCatController:self andmessage:data[@"msg"]];
+        }
+    } andfailBlock:^(NSError *error) {
+        [HttpRequest showAlertCatController:self andmessage:@"网络错误"];
+    }];
 
+}
+- (void)createUI{
+    _Backgroundview = [[UIView alloc]init];
+    _Backgroundview.backgroundColor = WINDOW_backgroundColor;
+    _Backgroundview.layer.cornerRadius = 5;
+    _Backgroundview.layer.masksToBounds = YES;
+    _Backgroundview.layer.borderWidth = 1;
+    _Backgroundview.layer.borderColor = [UIColor blackColor].CGColor;
+    [self.view addSubview:_Backgroundview];
+
+    _tableV = [[UITableView alloc]init];
+    _tableV.dataSource = self;
+    _tableV.delegate = self;
+    
+    [_tableV setSeparatorColor:[UIColor clearColor]];
+    
+    _tableV.backgroundColor = WINDOW_backgroundColor;
+    [_Backgroundview addSubview:_tableV];
+    [_tableV registerClass:[ClassCell class] forCellReuseIdentifier:@"classID"];
+    
+    
+    _HeaderView = [[UIView alloc]init];
+    _HeaderView.layer.borderWidth = 1;
+    _HeaderView.layer.borderColor = [UIColor grayColor].CGColor;
+    _HeaderView.layer.cornerRadius = 10;
+    _HeaderView.layer.masksToBounds = YES;
+    [_Backgroundview addSubview:_HeaderView];
+    
+    _TextV = [[UITextView alloc]init];
+    _TextV.backgroundColor = WINDOW_backgroundColor;
+    _TextV.textColor = [UIColor whiteColor];
+    _TextV.font = [UIFont fontWithName:@"American Typewriter" size:27.0];
+//    NSArray * family = [UIFont familyNames];
+    _TextV.scrollEnabled = YES;
+    _TextV.editable = NO;
+    _TextV.layer.cornerRadius = 5;
+    _TextV.layer.masksToBounds = YES;
+    _TextV.layer.borderWidth = 1;
+    _TextV.layer.borderColor = [UIColor grayColor].CGColor;
+    [_Backgroundview addSubview:_TextV];
+    
+    
+}
+- (void)createHeaderUIWith:(ClassModel *)model{
+    [_HeaderView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
+    
+    NSArray * arr = model.plan;
+    for (int i = 0; i < arr.count; i ++) {
+        if (arr.count == 1) {
+            FenLeiButton * btn = [[FenLeiButton alloc]initWithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) -100) / 2.0 , 5, 100, 40)];
+            [btn addTarget:self action:@selector(show:) forControlEvents:UIControlEventTouchUpInside];
+            btn.tag = [[arr[i] valueForKey:@"id"] intValue] + 200;
+            [btn setTitle:[arr[i] valueForKey:@"plan_name"] forState:UIControlStateNormal];
+            btn.layer.cornerRadius = 10;
+            btn.layer.masksToBounds = YES;
+            btn.layer.borderWidth = 1;
+            btn.layer.borderColor = [UIColor grayColor].CGColor;
+            
+            [_HeaderView addSubview:btn];
+            [_deleteFenleiArr addObject:btn];
+        }else{
+            
+            FenLeiButton * btn = [[FenLeiButton alloc]initWithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) - arr.count * 100)  / (arr.count +1) * (i +1) + 100 * i, 5, 100, 40)];
+            
+            [btn addTarget:self action:@selector(show:) forControlEvents:UIControlEventTouchUpInside];
+            btn.tag = [[arr[i] valueForKey:@"id"] intValue] + 200;
+            [btn setTitle:[arr[i] valueForKey:@"plan_name"] forState:UIControlStateNormal];
+            btn.layer.cornerRadius = 10;
+            btn.layer.masksToBounds = YES;
+            btn.layer.borderWidth = 1;
+            btn.layer.borderColor = [UIColor grayColor].CGColor;
+            
+            [_HeaderView addSubview:btn];
+            [_deleteFenleiArr addObject:btn];
+            
+        }
+    }
+
+}
+- (void)createRect{
+    if (ISSHUPING) {
+        if (_islook) {
+            [_Backgroundview mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L /3.0);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                make.top.and.left.offset(0);
+            }];
+            
+        }else{
+            [_Backgroundview mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                make.top.and.left.offset(0);
+
+            }];
+        }
+        
+    }else if(ISHENGPING){
+        if (_islook) {
+            [_Backgroundview mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                make.top.and.left.offset(0);
+
+            }];
+            
+            
+        }else{
+            [_Backgroundview mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                make.top.and.left.offset(0);
+
+            }];
+            
+        }
+        
+    }
+    [_tableV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.and.left.and.bottom.offset(0);
+        make.width.mas_equalTo(170.25 / 2.0);
+        
+    }];
+    [_HeaderView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.and.right.offset(0);
+        make.left.mas_equalTo(_tableV.mas_right);
+        make.height.mas_equalTo(50);
+        
+    }];
+    [_TextV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.offset(50);
+        make.left.offset(170.25/2.0);
+        make.right.offset(0);
+        make.bottom.offset(0);
+        
+    }];
+
+}
+#pragma mark 通知实现方法
+
+- (void)handleDeviceOrientationDidChange:(UIInterfaceOrientation)interfaceOrientation{
+
+    if (ISSHUPING) {
+        [self fenleiVdismiss];
+            
+        if (_islook) {
+            [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L /3.0);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                
+            }];
+            [_HeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.and.right.offset(0);
+                make.left.offset(170.25 / 2.0);
+                make.height.mas_equalTo(50);
+                
+            }];
+        }else{
+            [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+            }];
+            [_HeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.and.right.offset(0);
+                make.left.offset(170.25 / 2.0);
+                make.height.mas_equalTo(50);
+                
+            }];
+        }
+        [self screenChangAnimated];
+        [self createHeaderUIWith:_daraArr[_lastindexpath.row]];
+        
+
+    }else if(ISHENGPING){
+        [self fenleiVdismiss];
+        if (_islook) {
+            [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+            }];
+            [_HeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.and.right.offset(0);
+                make.left.offset(170.25 / 2.0);
+                make.height.mas_equalTo(50);
+                
+            }];
+        }else{
+            [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(UISCREEN_W);
+                make.height.mas_equalTo(UISCREEN_H - 84);
+                
+            }];
+            [_HeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.and.right.offset(0);
+                make.left.offset(170.25 / 2.0);
+                make.height.mas_equalTo(50);
+                
+            }];
+        }
+        [self screenChangAnimated];
+        [self createHeaderUIWith:_daraArr[_lastindexpath.row]];
+
+    }
+}
+- (void)menunoti:(NSNotification *)noti{
+    
+    NSString * Info = [noti.userInfo valueForKey:@"1"];
+    
+    if ([Info isEqualToString:@"出现"]) {
+        
+        _islook = YES;
+        
+        [self handleDeviceOrientationDidChange:[[UIApplication sharedApplication] statusBarOrientation]];
+        
+    }else if([Info isEqualToString:@"消失"]){
+        
+        _islook = NO;
+        
+        [self handleDeviceOrientationDidChange:[[UIApplication sharedApplication] statusBarOrientation]];
+        
+    }
+    
+    
+}
+#pragma mark 代理方法
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    return _daraArr.count;
+    
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    ClassCell * cell = [[ClassCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"classID"];
+    if (_daraArr.count != 0) {
+        ClassModel * model = _daraArr[indexPath.row];
+        [cell creatCellWithClassModel:model];
+    }
+    return cell;
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    ClassCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    if (_lastcell && cell != _lastcell) {
+        [_lastcell backColor];
+        [_tableV reloadRowsAtIndexPaths:[NSArray arrayWithObjects:_lastindexpath, nil] withRowAnimation:UITableViewRowAnimationNone];
+        
+    }
+    _lastcell = cell;
+    _lastindexpath = indexPath;
+    [cell changeColor];
+    
+    [_HeaderView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    [self fenleiVdismiss];
+    
+    [self createHeaderUIWith:_daraArr[indexPath.row]];
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 170.25 / 2.0;
+    
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void)show:(FenLeiButton *)btn{
+    if (!btn.selected) {
+        if (_fenleiV) {
+            [_fenleiV removeFromSuperview];
+            for (FenLeiButton * btn1 in _deleteFenleiArr) {
+                if (btn1 != btn) {
+                    btn1.selected = NO;
+                }
+            }
+        }
+        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.training&plan_id=%d",TESTBASEURL,(int)(btn.tag - 200)];
+        [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+            if (data && [data[@"rc"] integerValue] == 0) {
 
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _fenleiV = [[FenleiView alloc]init];
+                    _fenleiV.delegate = self;
+                    _fenleiV.layer.masksToBounds = YES;
+                    CATransition *transition = [CATransition animation];
+                    transition.duration = 0.3f;
+                    transition.type = kCATransitionReveal;
+                    transition.subtype = kCATransitionFromBottom;
+                    [_Backgroundview addSubview:_fenleiV];
+
+                    [_fenleiV.layer addAnimation:transition forKey:@"animation"];
+                    
+                    [_fenleiV createUIWithArr:data[@"data"]];
+
+                    [_fenleiV mas_makeConstraints:^(MASConstraintMaker *make) {
+                        make.top.mas_equalTo(_HeaderView.mas_bottom);
+                        make.left.mas_equalTo(_tableV.mas_right);
+                        make.right.and.bottom.offset(0);
+                        
+                    }];
+                    
+                });
+            }else{
+                
+                [HttpRequest showAlertCatController:self andmessage:data[@"msg"]];
+                
+                
+            }
+        } andfailBlock:^(NSError *error) {
+            [HttpRequest showAlertCatController:self andmessage:@"服务器开小差了"];
+        }];
+        btn.selected = !btn.selected;
+
+    }else{
+    if (_fenleiV) {
+        [self fenleiVdismiss];
+        
+        for (FenLeiButton * btn1 in _deleteFenleiArr) {
+
+            btn1.selected = NO;
+            
+        }
+    }
+    }
+    
+}
+#pragma mark 实现分类选项的代理
+- (void)backdata:(NSString *)data{    
+    [_fenleiV removeFromSuperview];
+    if (_TextV) {
+        _TextV.text = data;
+    }
+}
+#pragma mark  移除观察者
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"xuanxiang" object:nil];
+    
+}
+#pragma mark 添加转屏动画
+- (void)screenChangAnimated{
+    [self.view setNeedsUpdateConstraints];
+    [self.view updateFocusIfNeeded];
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.view layoutIfNeeded];
+        
+    }];
+}
+#pragma mark 消失
+- (void)fenleiVdismiss{
+    if (_fenleiV) {
+    
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3f;
+    transition.type = kCATransitionReveal;
+    transition.subtype = kCATransitionFromBottom;
+    [_fenleiV removeFromSuperview];
+    
+    [_fenleiV.layer addAnimation:transition forKey:@"animation"];
+    }
+}
 /*
 #pragma mark - Navigation
 
