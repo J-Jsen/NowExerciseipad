@@ -38,6 +38,14 @@
 }
 - (void)createUI{
     
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString * name = [defaults valueForKey:@"name"];
+    NSString * password = [defaults valueForKey:@"mima"];
+    
+    NSString * iconurl = [defaults valueForKey:@"iconurl"];
+    
+    
     _iconImageV = [[UIImageView alloc]init];
     _nameTF = [[UITextField alloc]init];
     _passwordTF = [[UITextField alloc]init];
@@ -80,6 +88,8 @@
     _passwordTF.layer.masksToBounds = YES;
     _passwordTF.textColor = [UIColor whiteColor];
     _passwordTF.placeholder = @"密码";
+    _passwordTF.secureTextEntry = YES;
+    
     [_passwordTF setValue:LOGINVIEW_COLEOR forKeyPath:@"_placeholderLabel.textColor"];
     _passwordTF.leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 10, 0)];
     _passwordTF.leftViewMode = UITextFieldViewModeAlways;
@@ -92,6 +102,12 @@
     [_LoginBtn setAttributedTitle:title forState:UIControlStateNormal];
     [_LoginBtn addTarget:self action:@selector(Btnclick:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (iconurl) {
+        [_iconImageV setImageWithURL:[NSURL URLWithString:iconurl]];
+
+    }
+    _nameTF.text = name;
+    _passwordTF.text = password;
     
     
     [self.view addSubview:_iconImageV];
@@ -166,44 +182,29 @@
     if (_nameTF.text.length != 0 && _passwordTF.text.length != 0) {
         NSLog(@"%@*********%@",_nameTF.text,_passwordTF.text);
         
-    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",TESTBASEURL,_nameTF.text,[_passwordTF.text MD5]];
+    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",BASEURL,_nameTF.text,[_passwordTF.text MD5]];
         NSLog(@"%@",url);
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:^(NSProgress * progress) {
-        
-        
-        
     } andsuccessBlock:^(id data) {
         if (data) {
             NSLog(@"数据:%@",data);
             NSDictionary * dic = (NSDictionary *)data;
-            
             NSInteger rc = [[dic valueForKey:@"rc"] integerValue];
             NSString * msg = dic[@"msg"];
             if (rc == 0) {
-                
                 NSUserDefaults * user = [NSUserDefaults standardUserDefaults];
                 [user setValue:_nameTF.text forKey:@"name"];
                 [user setValue:_passwordTF.text forKey:@"mima"];
-                
-                [self.delegate LoginSuecces];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"main" object:nil];
                 [self dismissViewControllerAnimated:YES completion:nil];
                 
-                
             }else{
-                
                 UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
                 [alertC addAction:action];
-                
                 [self presentViewController:alertC animated:YES completion:nil];
-                
-                
-                
             }
-            
         }
-        
-        
     } andfailBlock:^(NSError *error) {
         
         UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
@@ -211,11 +212,7 @@
         [alertC addAction:action];
         
         [self presentViewController:alertC animated:YES completion:nil];
-        
-
-        
     }];
-    
     
     }else{
         
@@ -225,19 +222,13 @@
         
         [self presentViewController:alertC animated:YES completion:nil];
         
- 
-        
     }
-    
-    
-    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 
 }
-
 
 -(void)dealloc{
     

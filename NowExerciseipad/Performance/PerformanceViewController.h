@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface PerformanceViewController : UIViewController
+@property (nonatomic , assign) BOOL islook;
 
 @end

@@ -11,9 +11,10 @@
 
 
 @interface NotesView : UIView
+- (instancetype)initWith;
 
 
-- (void)seturlwithtype:(NSInteger)type filtertype:(NSString *)filtertype teacherID:(NSInteger)teacherID filterID:(NSInteger)fileterID ;
+- (void)seturlwithteacherID:(NSInteger)teacherID;
 - (void)reloadData;
 
 

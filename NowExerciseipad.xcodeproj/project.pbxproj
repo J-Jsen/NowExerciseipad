@@ -95,6 +95,8 @@
 		6331BE981DC9E17100E31278 /* WenDaModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6331BE971DC9E17100E31278 /* WenDaModel.m */; };
 		6331BE9B1DC9E18300E31278 /* XuanZeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6331BE9A1DC9E18300E31278 /* XuanZeModel.m */; };
 		633B2A181DC889240055DD60 /* GoButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 633B2A171DC889240055DD60 /* GoButton.m */; };
+		634F3A531DD965C4002859C9 /* jieduanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 634F3A521DD965C4002859C9 /* jieduanView.m */; };
+		634F3A561DD965E0002859C9 /* dayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 634F3A551DD965E0002859C9 /* dayView.m */; };
 		635557A61DCC5B56005E6E36 /* FenLeiButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 635557A51DCC5B56005E6E36 /* FenLeiButton.m */; };
 		635557A91DCC646B005E6E36 /* ClassModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 635557A81DCC646B005E6E36 /* ClassModel.m */; };
 		635557AC1DCC7083005E6E36 /* ClassCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 635557AB1DCC7083005E6E36 /* ClassCell.m */; };
@@ -137,6 +139,7 @@
 		63C082A51DCB2C0100F6895E /* GuoDongTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63C082A31DCB2C0100F6895E /* GuoDongTableViewCell.xib */; };
 		63C082A81DCB403700F6895E /* xuanzeBTN.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C082A71DCB403700F6895E /* xuanzeBTN.m */; };
 		63C082AB1DCB534800F6895E /* Mytextfield.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C082AA1DCB534800F6895E /* Mytextfield.m */; };
+		63C951571DDACEF800DB7748 /* PersonalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C951561DDACEF800DB7748 /* PersonalView.m */; };
 		63CFFCB21DD1D9F6008BBCBC /* detailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CFFCB11DD1D9F6008BBCBC /* detailCell.m */; };
 		63DF9A261DD31415004389D4 /* detailheaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63DF9A251DD31415004389D4 /* detailheaderView.m */; };
 		63F047A41DCADCEC00E2F5C4 /* WenjuanModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63F047A31DCADCEC00E2F5C4 /* WenjuanModel.m */; };
@@ -279,6 +282,10 @@
 		6331BE9A1DC9E18300E31278 /* XuanZeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XuanZeModel.m; sourceTree = "<group>"; };
 		633B2A161DC889240055DD60 /* GoButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoButton.h; sourceTree = "<group>"; };
 		633B2A171DC889240055DD60 /* GoButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoButton.m; sourceTree = "<group>"; };
+		634F3A511DD965C4002859C9 /* jieduanView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jieduanView.h; sourceTree = "<group>"; };
+		634F3A521DD965C4002859C9 /* jieduanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jieduanView.m; sourceTree = "<group>"; };
+		634F3A541DD965DF002859C9 /* dayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dayView.h; sourceTree = "<group>"; };
+		634F3A551DD965E0002859C9 /* dayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dayView.m; sourceTree = "<group>"; };
 		635557A41DCC5B56005E6E36 /* FenLeiButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FenLeiButton.h; sourceTree = "<group>"; };
 		635557A51DCC5B56005E6E36 /* FenLeiButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FenLeiButton.m; sourceTree = "<group>"; };
 		635557A71DCC646B005E6E36 /* ClassModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassModel.h; sourceTree = "<group>"; };
@@ -359,6 +366,8 @@
 		63C082A71DCB403700F6895E /* xuanzeBTN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xuanzeBTN.m; sourceTree = "<group>"; };
 		63C082A91DCB534800F6895E /* Mytextfield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mytextfield.h; sourceTree = "<group>"; };
 		63C082AA1DCB534800F6895E /* Mytextfield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mytextfield.m; sourceTree = "<group>"; };
+		63C951551DDACEF800DB7748 /* PersonalView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonalView.h; sourceTree = "<group>"; };
+		63C951561DDACEF800DB7748 /* PersonalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonalView.m; sourceTree = "<group>"; };
 		63CFFCB01DD1D9F6008BBCBC /* detailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detailCell.h; sourceTree = "<group>"; };
 		63CFFCB11DD1D9F6008BBCBC /* detailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = detailCell.m; sourceTree = "<group>"; };
 		63DF9A241DD31415004389D4 /* detailheaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detailheaderView.h; sourceTree = "<group>"; };
@@ -432,6 +441,8 @@
 				6311935C1DC039B600C18349 /* LoginViewController.h */,
 				6311935D1DC039B600C18349 /* LoginViewController.m */,
 				6311935E1DC039B600C18349 /* LoginViewController.xib */,
+				63C951551DDACEF800DB7748 /* PersonalView.h */,
+				63C951561DDACEF800DB7748 /* PersonalView.m */,
 				6311935B1DC0399000C18349 /* view */,
 				6311935A1DC0398600C18349 /* model */,
 			);
@@ -684,6 +695,7 @@
 		631193ED1DC07ABD00C18349 /* view */ = {
 			isa = PBXGroup;
 			children = (
+				6390FBAA1DDB14A1002E73CB /* CheckView */,
 				632DF5B61DD43A1800B3B01A /* NotesView */,
 				637788631DD2E64600641A84 /* DetailView */,
 				63CFFCB01DD1D9F6008BBCBC /* detailCell.h */,
@@ -755,6 +767,10 @@
 				6389D1BC1DD567B600499CF5 /* AddNotesCell.h */,
 				6389D1BD1DD567B600499CF5 /* AddNotesCell.m */,
 				6389D1BE1DD567B600499CF5 /* AddNotesCell.xib */,
+				634F3A511DD965C4002859C9 /* jieduanView.h */,
+				634F3A521DD965C4002859C9 /* jieduanView.m */,
+				634F3A541DD965DF002859C9 /* dayView.h */,
+				634F3A551DD965E0002859C9 /* dayView.m */,
 				63594D2A1DD59720002B3C45 /* NotesCell.h */,
 				63594D2B1DD59720002B3C45 /* NotesCell.m */,
 				63594D2C1DD59720002B3C45 /* NotesCell.xib */,
@@ -838,6 +854,29 @@
 				637788701DD2EABC00641A84 /* moveView.m */,
 				632DF5BC1DD4406900B3B01A /* HeaderView.h */,
 				632DF5BD1DD4406900B3B01A /* HeaderView.m */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		6390FBAA1DDB14A1002E73CB /* CheckView */ = {
+			isa = PBXGroup;
+			children = (
+				6390FBAB1DDB14A1002E73CB /* model */,
+				6390FBAC1DDB14A1002E73CB /* view */,
+			);
+			path = CheckView;
+			sourceTree = "<group>";
+		};
+		6390FBAB1DDB14A1002E73CB /* model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		6390FBAC1DDB14A1002E73CB /* view */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -998,6 +1037,7 @@
 				632DF5B51DD4144300B3B01A /* moveCell.m in Sources */,
 				635557C51DCC840F005E6E36 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				6311938A1DC04B0B00C18349 /* MASViewConstraint.m in Sources */,
+				634F3A531DD965C4002859C9 /* jieduanView.m in Sources */,
 				632DF5BE1DD4406900B3B01A /* HeaderView.m in Sources */,
 				632DF5BB1DD43A3900B3B01A /* NotesView.m in Sources */,
 				6330829C1DC1EC1300D67875 /* AFURLSessionManager.m in Sources */,
@@ -1022,6 +1062,7 @@
 				63C0828D1DCB1C3C00F6895E /* BaseTableViewCell.m in Sources */,
 				631193871DC04B0B00C18349 /* MASConstraintMaker.m in Sources */,
 				631193921DC04B9200C18349 /* NavView.m in Sources */,
+				634F3A561DD965E0002859C9 /* dayView.m in Sources */,
 				635557CA1DCC840F005E6E36 /* UIWebView+AFNetworking.m in Sources */,
 				6377885C1DD2BF5E00641A84 /* leftdetailV.m in Sources */,
 				63C0829F1DCB2BEE00F6895E /* HealthTableViewCell.m in Sources */,
@@ -1044,6 +1085,7 @@
 				631193881DC04B0B00C18349 /* MASLayoutConstraint.m in Sources */,
 				635557C21DCC840F005E6E36 /* AFAutoPurgingImageCache.m in Sources */,
 				639473F21DC35C3C00F53758 /* Base64.m in Sources */,
+				63C951571DDACEF800DB7748 /* PersonalView.m in Sources */,
 				639F13581DCC228C00A60E96 /* Mylabel.m in Sources */,
 				639B0CB31DD16C97004739EE /* FenleiView.m in Sources */,
 				6377886D1DD2E70D00641A84 /* detailModel.m in Sources */,

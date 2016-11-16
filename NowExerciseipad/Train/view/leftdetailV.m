@@ -10,6 +10,7 @@
 #import "TeacherModel.h"
 #import "teacherCell.h"
 
+//#import "NotesView.h"
 @interface leftdetailV()<UITableViewDelegate,UITableViewDataSource>
 {
 //    teacherCell * lastcell;
@@ -57,7 +58,7 @@ Arrayproperty(dataArr)
 
 - (void)updata{
     
-    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.allcoach",TESTBASEURL];
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.allcoach",BASEURL];
     NSLog(@"%@",url);
 
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
@@ -110,8 +111,13 @@ Arrayproperty(dataArr)
         [cell selectCellwithmodel:_dataArr[indexPath.row]];
         NSArray * arr = [NSArray arrayWithObjects:[NSIndexPath indexPathForRow:lastinteger inSection:0],indexPath, nil];
         [tableView reloadRowsAtIndexPaths:arr withRowAnimation:UITableViewRowAnimationNone];
+        TeacherModel * model = _dataArr[indexPath.row];
 
+        NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
+        [center postNotificationName:@"jiaolian" object:nil userInfo:@{@"uid":@(model.uid)}];
+        
     }
+    
    
 }
 - (void)reloadtableview{

@@ -11,8 +11,13 @@
 @interface NotesModel : NSObject
 
 Stringproperty(coach_name)
-Dictionaryproperty(grade)
-
-
+Stringproperty(progress)
+Stringproperty(time)
+Stringproperty(remark)
+Stringproperty(content)
+Stringproperty(result)
+Stringproperty(feedback)
+Stringproperty(training_coach)
+Intagerproperty(ID)
 
 @end

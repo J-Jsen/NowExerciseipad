@@ -11,8 +11,9 @@
 #import "MainViewController.h"
 #import "Reachability.h"
 #import "LoginViewController.h"
-@interface AppDelegate ()<Logindelegate>
 
+@interface AppDelegate ()<Logindelegate>
+@property (nonatomic , strong) LoginViewController * loginVC;
 @end
 
 @implementation AppDelegate
@@ -34,27 +35,26 @@
 
 //    NSDictionary *remoteNotification = [launchOptions objectForKey: UIApplicationLaunchOptionsRemoteNotificationKey];
 //    NSLog(@"APNS   %@",remoteNotification);
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changerootview) name:@"login" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(LoginSuecces) name:@"main" object:nil];
     //横竖屏通知
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-   
+
     
     
    //***************************************************************************
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     
-    LoginViewController * login = [[LoginViewController alloc]init];
-    
-    login.delegate = self;
+    _loginVC = [[LoginViewController alloc]init];
+
     UIViewController * viewc = [[UIViewController alloc]init];
     _window.rootViewController = viewc;
-    
     
     NSUserDefaults * userdefult = [NSUserDefaults standardUserDefaults];
     NSString * name = [userdefult valueForKey:@"name"];
     NSString * mima = [userdefult valueForKey:@"mima"];
     NSLog(@"mingzi%@",name);
-    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",TESTBASEURL,name,[mima MD5]];
+    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",BASEURL,name,[mima MD5]];
     NSLog(@"%@",url);
     if (name.length != 0 && mima.length != 0) {
         [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
@@ -65,32 +65,23 @@
                 
                 if (rc == 0) {
                     _window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[MainViewController alloc]init]];
-                    
-                    
                 }else{
-                    
-                    _window.rootViewController = login;
-                    
+                    _window.rootViewController = _loginVC;
                 }
             }
         } andfailBlock:^(NSError *error) {
-          
             UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"温馨提示" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
-            
-            
             [alert addAction: [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                 
             }]];
-            
-            _window.rootViewController = login;
-            
+            _window.rootViewController = _loginVC;
             [_window.rootViewController presentViewController:alert animated:YES completion:nil];
 
         }];
         
     }else{
         
-    self.window.rootViewController = login;
+    self.window.rootViewController = _loginVC;
     }
     [self.window setBackgroundColor:WINDOW_backgroundColor];
     [self.window makeKeyAndVisible];
@@ -135,6 +126,12 @@
     
     _window.rootViewController = [[UINavigationController alloc]initWithRootViewController: [[MainViewController alloc]init]];
  
+    
+}
+#pragma mark 更换用户
+- (void)changerootview{
+    _window.rootViewController = [[LoginViewController alloc]init];
+    
     
 }
 #pragma mark 实现网络监控方法

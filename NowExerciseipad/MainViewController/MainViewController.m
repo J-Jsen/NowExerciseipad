@@ -13,9 +13,15 @@
 #import "ClassViewController.h"
 #import "OrderViewController.h"
 #import "TrainViewController.h"
+#import "PerformanceViewController.h"
+
+#import "PersonalView.h"//个人信息
 
 @interface MainViewController ()<NavViewdelegate>
-
+{
+    UIView * navPushView;
+    
+}
 @property (nonatomic ,strong) NavView * navV;
 //右方主视图
 @property (nonatomic , strong) UIView * mainV;
@@ -34,6 +40,8 @@
 @property (nonatomic , strong) OrderViewController * orderVC;
 @property (nonatomic , strong) ClassViewController * classVC;
 @property (nonatomic , strong) TrainViewController * trainVC;
+@property (nonatomic , strong) PerformanceViewController * performanceVC;
+
 @property (nonatomic , assign) BOOL isopen;
 
 @end
@@ -47,6 +55,7 @@
     self.view.backgroundColor = WINDOW_backgroundColor;
     self.navigationController.navigationBarHidden = YES;
     [self createUI];
+    [self loaddata];
     
     
     // Do any additional setup after loading the view from its nib.
@@ -68,6 +77,7 @@
     _navV.delegate = self;//设置带代理
     
     [_navV.menuBtn addTarget:self action:@selector(MenuBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [_navV.IconBtn addTarget:self action:@selector(IconBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
     _orderVC = [[OrderViewController alloc]init];
     
@@ -76,13 +86,7 @@
     _mainV = [[UIView alloc]init];
     _mainV.contentMode = UIViewContentModeScaleAspectFit;
     
-    
     [_mainV addSubview:_orderVC.view];
-//    [_orderVC.view mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.and.left.and.bottom.and.right.mas_equalTo(0);
-//  
-//        
-//    }];
 
     _OrderBtn = [[OptionBtn alloc]initWithName:@"订单" andWithImageName:@"5.png"];
     _ClassBtn = [[OptionBtn alloc]initWithName:@"课程" andWithImageName:@"6.png"];
@@ -148,6 +152,7 @@
     [self masonryUI];
 
 }
+
 #pragma mark masonry 布局
 - (void)masonryUI{
    //上方导航栏
@@ -321,6 +326,40 @@
     
     [[UIApplication sharedApplication] statusBarOrientation];
 
+}
+
+#pragma mark 数据load个人信息
+- (void)loaddata{
+    
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.personal_info",BASEURL];
+    
+//    http://192.168.1.5/pad/?method=coach.personal_info
+    
+    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+        if (data && [data[@"rc"] integerValue] == 0) {
+            NSDictionary * datadic = data[@"data"];
+            NSUserDefaults * defults = [NSUserDefaults standardUserDefaults];
+            [defults setObject:datadic[@"uid"] forKey:@"uid"];
+            [defults setObject:datadic[@"class_times"] forKey:@"classtime"];
+            [defults setObject:datadic[@"headimg"] forKey:@"iconurl"];
+            [defults setObject:datadic[@"city"] forKey:@"place"];
+            [defults setObject:datadic[@"id_card"] forKey:@"personID"];
+            [defults setObject:datadic[@"username"] forKey:@"username"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (_navV.IconBtn) {
+                [_navV.IconBtn createiconWithiconUrl:datadic[@"headimg"] name:datadic[@"username"]];
+                }
+            });
+            
+        }else{
+            [HttpRequest showAlertCatController:self andmessage:@"获取个人信息失败"];
+        }
+        
+    } andfailBlock:^(NSError *error) {
+        [HttpRequest showAlertCatController:self andmessage:@"服务器开小差了"];
+    }];
+    
+    
 }
 
 #pragma mark 通知的处理
@@ -608,7 +647,7 @@
         }
             break;
         case 300:
-            
+        {
             btn.imageV.image = [UIImage imageNamed:@"10.png"];
             _OrderBtn.imageV.image = [UIImage imageNamed:@"5.png"];
             _ClassBtn.imageV.image = [UIImage imageNamed:@"6.png"];
@@ -633,10 +672,10 @@
                 [_mainV addSubview:_trainVC.view];
             }
             
-            
+        }
             break;
         case 400:
-            
+        {
             
             btn.imageV.image = [UIImage imageNamed:@"11.png"];
             _ClassBtn.imageV.image = [UIImage imageNamed:@"6.png"];
@@ -652,9 +691,18 @@
                 }
                 
             }
+            if (_performanceVC) {
+                [_mainV bringSubviewToFront:_performanceVC.view];
+            }else{
+                _performanceVC = [[PerformanceViewController alloc]init];
+                _performanceVC.islook = _isopen;
+                
+                [_mainV addSubview:_performanceVC.view];
+                
+            }
             
 
-            
+        }
             break;
             
         default:
@@ -719,6 +767,12 @@
         [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"出现"}];
         _isopen = YES;
         
+        if (navPushView) {
+            [navPushView removeFromSuperview];
+            _navV.IconBtn.userInteractionEnabled = YES;
+            
+        }
+        
         NSLog(@"菜单出现");
         
     }else{
@@ -735,7 +789,31 @@
     
     
 }
-
+#pragma mark 头像点击事件
+- (void)IconBtnClick:(iconBtn *)btn{
+    navPushView = [[UIView alloc]init];
+    [self.view addSubview:navPushView];
+    navPushView.backgroundColor = [UIColor redColor];
+    
+    PersonalView * personV = [[PersonalView alloc]init];
+    [navPushView addSubview:personV];
+    
+    [navPushView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.offset(80);
+        make.left.and.right.and.bottom.offset(0);
+        
+    }];
+    
+    [personV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.offset(0);
+        
+    }];
+    
+    _navV.menuBtn.selected = NO;
+    [self MenuBtnclick:_navV.menuBtn];
+    btn.userInteractionEnabled = NO;
+    
+}
 #pragma mark 选项栏消失
 - (void)Opetiondismiss{
 

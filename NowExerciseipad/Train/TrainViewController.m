@@ -48,6 +48,9 @@
 }
 - (void)createUI{
     _backgroundV = [[UIView alloc]init];
+    _backgroundV.layer.borderWidth = 1;
+    _backgroundV.layer.borderColor = LEFTBTNTEXT_BACKGROUNDCOLOR.CGColor;
+    
     [self.view addSubview:_backgroundV];
     
     _leftBtnV = [[UIView alloc]init];
@@ -112,21 +115,29 @@
                 _detailV.hidden = YES;
                 if (_notesV) {
                     [_notesV removeFromSuperview];
-                }else{
+                }
                     //新建
                     [_leftdetailV reloadtableview];
                     _notesV = [[NotesView alloc]init];
+                
                     [_rightV addSubview:_notesV];
                     
                     [_notesV mas_makeConstraints:^(MASConstraintMaker *make) {
                         make.edges.offset(0);
                     }];
-                }
+                
+                _detailBtn.selected = NO;
+                _checktrainBtn.selected = NO;
+                
+                
             }
                 break;
             case 330://考核记录
             {
                 _leftdetailV.hidden = NO;
+                _notestrainBtn.selected = NO;
+                _detailBtn.selected = NO;
+                
 
             }
                 break;

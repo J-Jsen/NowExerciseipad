@@ -67,7 +67,7 @@
 
 - (void)reloadData{
     
-    NSString * url = [NSString stringWithFormat:@"%@pad/?method=questions.questions&order_id=%@&que_type=2",TESTBASEURL,_order_id];
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=questions.questions&order_id=%@&que_type=2",BASEURL,_order_id];
     NSLog(@"************************************************************%@",url);
     
    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {

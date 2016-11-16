@@ -14,5 +14,11 @@ Stringproperty(fankui)
 Intagerproperty(result)
 Stringproperty(qingkuang)
 Stringproperty(beizhu)
+Intagerproperty(classID)
+Stringproperty(jieduan)
+Stringproperty(dayL)
+Stringproperty(trainerName)
+Arrayproperty(dataArr)
+
 
 @end

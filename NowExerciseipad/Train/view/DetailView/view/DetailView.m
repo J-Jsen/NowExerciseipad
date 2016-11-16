@@ -54,7 +54,7 @@ Arrayproperty(dataArr)
     return self;
 }
 - (void)updata{
-    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.all_content",TESTBASEURL];
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.all_content",BASEURL];
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
         if (data && [data[@"rc"] integerValue] == 0) {
             NSArray * datarr = data[@"data"];

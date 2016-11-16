@@ -28,18 +28,7 @@
 @end
 
 @implementation OrderViewController
-//初始化frame大小
-//- (instancetype)init{
-//    
-//    
-//    if (self = [super init]) {
-//        
-//        self.view.frame = CGRectMake(0, 0, UISCREEN_W - LEFT_OPTION_L, UISCREEN_H - 84);
-//        
-//    }
-//    return self;
-//    
-//}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -55,9 +44,7 @@
     //菜单栏出现消失通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menunoti:) name:@"xuanxiang" object:nil];
     self.view.backgroundColor = [UIColor yellowColor];
-    
-   
-    
+
     [self reloadUI];
     
     
@@ -88,7 +75,11 @@
 #pragma mark 加载数据
 - (void)loaddata{
     
-    NSString * url = [NSString stringWithFormat:@"%@%@",TESTBASEURL,@"pad/?method=coach.order"];
+    [_dataArr removeAllObjects];
+    [_newdataArr removeAllObjects];
+    
+    
+    NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,@"pad/?method=coach.order"];
     NSLog(@"%@",url);
     
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
@@ -135,18 +126,8 @@
         
     } andfailBlock:^(NSError *error) {
         
-        UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"加载订单失败" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
-        [alertC addAction:action];
-        
-        [self presentViewController:alertC animated:YES completion:nil];
-        
-        
-
-        
-        
+        [HttpRequest showAlertCatController:self andmessage:@"服务器开小差了"];
     }];
-    
     
 }
 #pragma Mark masonry布局
@@ -264,8 +245,6 @@
     }
     return cell;
     
-    
-    
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -274,7 +253,6 @@
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     
     return 155;
 }
@@ -297,9 +275,6 @@
         
         [_detailOrderVC createview];
         [self.view addSubview:_detailOrderVC.view];
-        
-        
-        
     }
     
 }
@@ -307,15 +282,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
-
-
-
-
-
-
-
 
 #pragma mark  移除观察者
 - (void)dealloc{

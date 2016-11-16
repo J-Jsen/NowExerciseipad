@@ -22,25 +22,28 @@
     
     if (self = [super init]) {
         
-        self.layer.borderWidth = 1;
-        self.layer.borderColor = [UIColor grayColor].CGColor;
+        self.layer.borderWidth = 0.5;
+        self.layer.borderColor = LEFTBTNTEXT_BACKGROUNDCOLOR.CGColor;
         
         
         _imageV = [[UIImageView alloc]init];
         _imageV.image = [UIImage imageNamed:name];
+        _imageV.contentMode = UIViewContentModeScaleAspectFit;
         
         [self addSubview:_imageV];
         
         _label = [[UILabel alloc]init];
         _label.textColor = WENDA_COLOR;
-        
+        _label.text = title;
+        _label.textAlignment = NSTextAlignmentCenter;
+        _label.font = [UIFont systemFontOfSize:15];
         [self addSubview:_label];
         
         [_imageV mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.offset(15);
-            make.right.offset(-15);
-            make.top.offset(5);
-            make.bottom.offset(-25);
+            make.left.offset(25);
+            make.right.offset(-25);
+            make.top.offset(25);
+            make.bottom.offset(-35);
             
         }];
         [_label mas_makeConstraints:^(MASConstraintMaker *make) {

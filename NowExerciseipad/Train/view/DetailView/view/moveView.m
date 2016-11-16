@@ -27,8 +27,7 @@ Arrayproperty(dataArr)
         _tableV.delegate = self;
         _tableV.backgroundColor = WINDOW_backgroundColor;
         [_tableV registerClass:[moveCell class] forCellReuseIdentifier:@"MOVEID"];
-//        [_tableV registerClass:[HeaderView class] forCellReuseIdentifier:@"MOVEHEAD"];
-//        [_tableV registerClass:[HeaderView class] forHeaderFooterViewReuseIdentifier:@"MOVEHEAD"];
+
         [self addSubview:_tableV];
         [_tableV setSeparatorColor:[UIColor clearColor]];
         _tableV.bounces = NO;
@@ -44,7 +43,7 @@ Arrayproperty(dataArr)
 
 - (void)updata{
     
-    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.framework",TESTBASEURL];
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.framework",BASEURL];
     
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
         if (data && [data[@"rc"] integerValue] == 0) {

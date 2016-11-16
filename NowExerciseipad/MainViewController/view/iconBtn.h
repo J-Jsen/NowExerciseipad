@@ -15,5 +15,7 @@
 @property (nonatomic , strong) UILabel * namelabel;
 
 - (instancetype)init;
+- (void)createiconWithiconUrl:(NSString *)url name:(NSString *)name;
+
 
 @end

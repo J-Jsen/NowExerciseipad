@@ -55,7 +55,7 @@ Arrayproperty(deleteFenleiArr)
     // Do any additional setup after loading the view.
 }
 - (void)loadData{
-    NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.my_training",TESTBASEURL];
+    NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.my_training",BASEURL];
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
         if (data && [data[@"rc"] integerValue] == 0) {
            NSArray * datarr = data[@"data"];
@@ -360,7 +360,7 @@ Arrayproperty(deleteFenleiArr)
                 }
             }
         }
-        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.training&plan_id=%d",TESTBASEURL,(int)(btn.tag - 200)];
+        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.training&plan_id=%d",BASEURL,(int)(btn.tag - 200)];
         [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
             if (data && [data[@"rc"] integerValue] == 0) {
 
@@ -368,6 +368,7 @@ Arrayproperty(deleteFenleiArr)
                     _fenleiV = [[FenleiView alloc]init];
                     _fenleiV.delegate = self;
                     _fenleiV.layer.masksToBounds = YES;
+#pragma mark 添加动画
                     CATransition *transition = [CATransition animation];
                     transition.duration = 0.3f;
                     transition.type = kCATransitionReveal;

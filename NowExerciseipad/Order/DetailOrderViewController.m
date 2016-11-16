@@ -156,7 +156,7 @@
 }
 - (void)postgoBtnStatus{
     NSString * method = [NSString stringWithFormat:@"pad/?method=coach.button&order_id=%@",_orderID];
-    NSString * url = [NSString stringWithFormat:@"%@%@",TESTBASEURL,method];
+    NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,method];
     NSLog(@"%@",url);
     
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
@@ -390,7 +390,7 @@
        
        UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 
-           NSString * url = [NSString stringWithFormat:@"%@%@",TESTBASEURL,_method];
+           NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,_method];
            NSLog(@"%@",url);
            
            [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
@@ -435,7 +435,7 @@
         UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"您确定要下课吗?" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 
-            NSString * url = [NSString stringWithFormat:@"%@%@",TESTBASEURL,_method];
+            NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,_method];
             
             [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
                 if (data && [data[@"rc"] integerValue] == 0) {

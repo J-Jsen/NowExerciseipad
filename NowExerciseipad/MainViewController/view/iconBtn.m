@@ -56,6 +56,13 @@
     }];
 
 }
+- (void)createiconWithiconUrl:(NSString *)url name:(NSString *)name{
+    NSLog(@"%@",url);
+    
+    [_iconV setImageWithURL:[NSURL URLWithString:url]];
+    _namelabel.text = name;
+    
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

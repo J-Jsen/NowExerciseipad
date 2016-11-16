@@ -38,8 +38,8 @@
 
 #define WEN_JIANGE_L 10
 //网址
-#define BASEURL @"http://www.guodongwl.com:8065/"
-#define TESTBASEURL @"http://192.168.1.5/"
+//#define BASEURL @"http://www.guodongwl.com:8065/"
+#define BASEURL @"http://192.168.1.5/"
 
 #define Stringproperty(x) @property (nonatomic , copy) NSString * x;
 
