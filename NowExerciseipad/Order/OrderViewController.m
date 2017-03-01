@@ -7,15 +7,18 @@
 //
 
 #import "OrderViewController.h"
+
 #import "DetailOrderViewController.h"
 #import "OrderModel.h"
 #import "OrderCell.h"
 
 #import "DetailOrderViewController.h"
 
-@interface OrderViewController ()<UITableViewDelegate,UITableViewDataSource>
-
-@property (nonatomic , strong)  UITableView * OrdertableV;
+@interface OrderViewController ()<UITableViewDelegate,UITableViewDataSource,Orderdelegate>
+{
+    UIView * backgroundV;
+    
+}
 @property (nonatomic , strong) NSMutableArray * newdataArr;
 @property (nonatomic , strong) NSMutableArray * dataArr;
 
@@ -33,7 +36,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 #pragma mark 添加屏幕通知
-
+ 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleDeviceOrientationDidChange:)
                                                  name:UIDeviceOrientationDidChangeNotification
@@ -43,8 +46,11 @@
     
     //菜单栏出现消失通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menunoti:) name:@"xuanxiang" object:nil];
-    self.view.backgroundColor = [UIColor yellowColor];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailorderdismiss) name:@"detailorderdismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushneworder:) name:@"neworder" object:nil];
+    
+    self.view.backgroundColor = WINDOW_backgroundColor;
+    
     [self reloadUI];
     
     
@@ -54,37 +60,57 @@
 
 - (void)reloadUI{
 
+    backgroundV = [[UIView alloc]init];
+    
+    backgroundV.backgroundColor = WINDOW_backgroundColor;
+    [self.view addSubview:backgroundV];
+    
+    
     _OrdertableV = [[UITableView alloc]init];
     _OrdertableV.delegate = self;
     _OrdertableV.dataSource = self;
+    _OrdertableV.separatorStyle = UITableViewCellSeparatorStyleNone;
+    MJRefreshStateHeader * header = [MJRefreshStateHeader headerWithRefreshingTarget:self  refreshingAction:@selector(refreshData)];
+    header.stateLabel.textColor = [UIColor whiteColor];
+    header.lastUpdatedTimeLabel.textColor = [UIColor whiteColor];
+    _OrdertableV.mj_header = header;
     
     [_OrdertableV registerClass:[OrderCell class] forCellReuseIdentifier:@"cellID"];
     
-    _OrdertableV.backgroundColor = [UIColor redColor];
+    _OrdertableV.backgroundColor = WINDOW_backgroundColor;
+    
     _dataArr = [NSMutableArray array];
     _newdataArr = [NSMutableArray array];
     
-
-    [self.view addSubview:_OrdertableV];
+    [backgroundV addSubview:_OrdertableV];
     
     [self createUI];
-     [self loaddata];
+    [self loaddata];
     
+    
+}
+#pragma mark 刷新数据
+- (void)refreshData{
+    
+    [self loaddata];
     
 }
 #pragma mark 加载数据
 - (void)loaddata{
-    
+//    _dataArr = nil;
+//    _newdataArr = ni
     [_dataArr removeAllObjects];
     [_newdataArr removeAllObjects];
-    
     
     NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,@"pad/?method=coach.order"];
     NSLog(@"%@",url);
     
-    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+    [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+       // NSLog(@"订单数据:%@",data);
+       // NSLog(@"%@",[data class]);
+        
         if (data) {
-                NSDictionary * dict = data;
+                NSMutableDictionary * dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             if ([dict[@"rc"] integerValue] == 0) {
                 
                 NSDictionary * datadic = dict[@"data"];
@@ -92,12 +118,13 @@
                 NSDictionary * newdic = datadic[@"new_order"];
                 
                 //数据
-                NSArray * neworderarr = newdic[@"orders"];
+                NSArray * neworderarr = newdic[@"info"];
+                
                 for (NSDictionary * dic in neworderarr) {
                     OrderModel * model = [[OrderModel alloc]init];
                     [model setValuesForKeysWithDictionary:dic];
                     model.newOrder = YES;
-                    
+                    [_newdataArr addObject:model];
                 }
                 
                 NSArray * orderarr = datadic[@"order"];
@@ -110,7 +137,18 @@
                     [_dataArr addObject:model];
                    
                 }
-                [_OrdertableV reloadData];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_OrdertableV.mj_header endRefreshing];
+                    [_OrdertableV reloadData];
+                    
+                    NSString * str = [NSString stringWithFormat:@"%ld",(unsigned long)_newdataArr.count];
+                    NSLog(@"新订单数量为:%@",str);
+                    NSString * leth = [NSString stringWithFormat:@"%@",newdic[@"length"]];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushmessage" object:nil userInfo:@{@"number":leth}];
+                    [UIApplication sharedApplication].applicationIconBadgeNumber = _newdataArr.count;
+                    
+                });
                 
             }else{
                 
@@ -135,7 +173,7 @@
     
     if (ISSHUPING) {
         
-        [_OrdertableV mas_makeConstraints:^(MASConstraintMaker *make) {
+        [backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.and.left.mas_equalTo(0);
             make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L / 3.0);
             make.height.mas_equalTo(UISCREEN_H - 84);
@@ -144,7 +182,7 @@
         
     }else{
         
-        [_OrdertableV mas_makeConstraints:^(MASConstraintMaker *make) {
+        [backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.and.left.mas_equalTo(0);
             make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
             make.height.mas_equalTo(UISCREEN_H - 84);
@@ -154,6 +192,10 @@
 
     }
     
+    [_OrdertableV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.offset(0);
+        
+    }];
     
     
 }
@@ -163,14 +205,14 @@
 - (void)handleDeviceOrientationDidChange:(UIInterfaceOrientation)interfaceOrientation{
     if (ISSHUPING) {
         if (_islook) {
-            [_OrdertableV mas_updateConstraints:^(MASConstraintMaker *make) {
+            [backgroundV mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L /3.0);
                 make.height.mas_equalTo(UISCREEN_H - 84);
                 
             }];
             
         }else{
-            [_OrdertableV mas_updateConstraints:^(MASConstraintMaker *make) {
+            [backgroundV mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W);
                 make.height.mas_equalTo(UISCREEN_H - 84);
             }];
@@ -178,14 +220,14 @@
         
     }else if(ISHENGPING){
         if (_islook) {
-            [_OrdertableV mas_updateConstraints:^(MASConstraintMaker *make) {
+            [backgroundV mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
                 make.height.mas_equalTo(UISCREEN_H - 84);
             }];
             
             
         }else{
-            [_OrdertableV mas_updateConstraints:^(MASConstraintMaker *make) {
+            [backgroundV mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W);
                 make.height.mas_equalTo(UISCREEN_H - 84);
                 
@@ -217,6 +259,12 @@
     
 }
 
+#pragma mark 新订单通知
+- (void)pushneworder:(NSNotification *)noti{
+    
+    [self loaddata];
+}
+
 #pragma mark tableview代理方法
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 0) {
@@ -233,6 +281,7 @@
         if (_newdataArr.count != 0) {
             OrderModel * model = _newdataArr[indexPath.row];
             [cell createCellWithmodel:model];
+            cell.delegate = self;
             
         }
     }else{
@@ -253,15 +302,15 @@
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-    return 155;
+    if (indexPath.section == 0) {
+        return 250;
+    }
+    return 175;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     //取消选中
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-  
     if (indexPath.section == 0) {
-
         
     }else{
         
@@ -274,10 +323,96 @@
         _detailOrderVC.isdone = model.Process;
         
         [_detailOrderVC createview];
-        [self.view addSubview:_detailOrderVC.view];
+        [_detailOrderVC postgoBtnStatus];
+        [_detailOrderVC createUpdataBtn];
+        [_detailOrderVC ispersonal];
+//        if (model.personal_id) {
+//            _detailOrderVC.personal_id = model.personal_id;
+//        }else{
+//            [_detailOrderVC nothavepersonal];
+//
+//        }
+        [backgroundV addSubview:_detailOrderVC];
+        [_detailOrderVC mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.offset(0);
+        }];
+        _detailOrderVC.detailBlock = ^(void){
+            model.Process = YES;
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            
+        };
+    
     }
     
 }
+
+#pragma mark 订单处理代理方法
+- (void)OrderprocessingWithModel:(OrderModel *)model andBool:(BOOL)Can{
+    __weak typeof (self) weakSelf = self;
+
+    if (Can) {
+        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.accept_order&order_id=%@",BASEURL,model.order_id];
+        [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+            NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+            if (data && [dic[@"rc"] integerValue] == 0) {
+                
+                [HttpRequest showAlertCatController:self andmessage:@"接单成功"];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf loaddata];
+                    
+                    _detailOrderVC = [[DetailOrderViewController alloc]init];
+                    
+                    _detailOrderVC.orderID = model.order_id;
+                    _detailOrderVC.isopen = _islook;
+                    
+                    _detailOrderVC.isdone = model.Process;
+                    [_detailOrderVC createview];
+                    [_detailOrderVC postgoBtnStatus];
+                    [_detailOrderVC createUpdataBtn];
+
+                    [backgroundV addSubview:_detailOrderVC];
+                    [_detailOrderVC mas_makeConstraints:^(MASConstraintMaker *make) {
+                        make.edges.offset(0);
+                    }];
+                });
+                
+            }else{
+                [HttpRequest showAlertCatController:self andmessage:dic[@"msg"]];
+                
+            }
+        } andfailBlock:^(NSError *error) {
+            [HttpRequest showAlertCatController:self andmessage:@"服务器开小差了"];
+
+        }];
+        
+        
+    }else{
+        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.refused_order&order_id=%@",BASEURL,model.order_id];
+        [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
+            NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+            if (data && [dic[@"rc"] integerValue] == 0) {
+                
+                [HttpRequest showAlertCatController:self andmessage:@"拒单成功"];
+                [self loaddata];
+            }else{
+                [HttpRequest showAlertCatController:self andmessage:dic[@"msg"]];
+            }
+        } andfailBlock:^(NSError *error) {
+            [HttpRequest showAlertCatController:self andmessage:@"服务器开小差了"];
+        }];
+    }
+}
+
+
+#pragma mark 移除订单详情
+- (void)detailorderdismiss{
+    if (_detailOrderVC){
+    [_detailOrderVC removeFromSuperview];
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -287,7 +422,8 @@
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"xuanxiang" object:nil];
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"detailorderdismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"neworder" object:nil];
 }
 
 /*

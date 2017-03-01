@@ -25,6 +25,7 @@
 #define LOGINVIEW_COLEOR                     [UIColor colorWithRed:198.0f / 255.0f green:188.0f/255.0f blue:193.0f/255.0f alpha:1]
 
 #define WENDA_COLOR                          [UIColor colorWithRed:186.0f / 255.0f green:143.0f/255.0f blue:97.0f/255.0f alpha:1]
+#define HUISE_TEXT                           [UIColor colorWithRed:178.0f/ 255.0f green:188.0f/255.0f blue:192.0f/255.0f alpha:1]
 
 
 #define ISSHUPING  [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortrait || [[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationPortraitUpsideDown
@@ -38,8 +39,8 @@
 
 #define WEN_JIANGE_L 10
 //网址
-//#define BASEURL @"http://www.guodongwl.com:8065/"
-#define BASEURL @"http://192.168.1.5/"
+#define BASEURL @"http://www.guodongwl.com:8065/"
+//#define BASEURL @"http://192.168.1.5/"
 
 #define Stringproperty(x) @property (nonatomic , copy) NSString * x;
 
@@ -55,6 +56,8 @@
 #import "HttpRequest.h"
 #import "NSString+Encryption.h"
 #import "UIKit+AFNetworking.h"
+#import "MJRefresh.h"
+#import "JPUSHService.h"
 
 #import "xuanzeBTN.h"
 #import "Mytextfield.h"

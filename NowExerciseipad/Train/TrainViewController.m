@@ -11,6 +11,7 @@
 #import "leftdetailV.h"
 #import "DetailView.h"
 #import "NotesView.h"
+#import "checkView.h"
 @interface TrainViewController ()
 @property (nonatomic , strong) UIView * backgroundV;
 
@@ -24,6 +25,8 @@
 
 @property (nonatomic , strong) DetailView * detailV;
 @property (nonatomic , strong) NotesView * notesV;
+@property (nonatomic , strong) checkView * checkV;
+
 @end
 
 @implementation TrainViewController
@@ -62,12 +65,12 @@
     _leftdetailV.backgroundColor = LEFTBTN_BACKGROUNDCOLOR;
     _leftdetailV.hidden = YES;
     
-    _detailBtn = [[trainButton alloc]initWithtitlename:@"培训内容" andimagename:@"36"];
+    _detailBtn = [[trainButton alloc]initWithtitlename:@"培训内容" andimagename:@"37"];
     _detailBtn.selected = YES;
     [_detailBtn changeColorWithimagename:@"36"];
     
-    _notestrainBtn = [[trainButton alloc]initWithtitlename:@"培训记录" andimagename:@"37"];
-    _checktrainBtn = [[trainButton alloc]initWithtitlename:@"考核记录" andimagename:@"37"];
+    _notestrainBtn = [[trainButton alloc]initWithtitlename:@"培训记录" andimagename:@"38"];
+    _checktrainBtn = [[trainButton alloc]initWithtitlename:@"考核记录" andimagename:@"40"];
     
     _detailBtn.tag = 310;
     _notestrainBtn.tag = 320;
@@ -103,6 +106,11 @@
                     _detailV.hidden = NO;
                     
                 }
+                [_detailBtn changeColorWithimagename:@"36"];
+                [_notestrainBtn backColorWithimagename:@"38"];
+                [_checktrainBtn backColorWithimagename:@"40"];
+                
+                
                 _leftdetailV.hidden = YES;
                 _notestrainBtn.selected = NO;
                 _checktrainBtn.selected = NO;
@@ -128,6 +136,9 @@
                 
                 _detailBtn.selected = NO;
                 _checktrainBtn.selected = NO;
+                [_detailBtn backColorWithimagename:@"37"];
+                [_notestrainBtn changeColorWithimagename:@"39"];
+                [_checktrainBtn backColorWithimagename:@"40"];
                 
                 
             }
@@ -137,8 +148,22 @@
                 _leftdetailV.hidden = NO;
                 _notestrainBtn.selected = NO;
                 _detailBtn.selected = NO;
+                [_detailBtn backColorWithimagename:@"37"];
+                [_notestrainBtn backColorWithimagename:@"38"];
+                [_checktrainBtn changeColorWithimagename:@"41"];
                 
-
+                if (_checkV) {
+                    [_checkV removeFromSuperview];
+                }
+                [_leftdetailV reloadtableview];
+                _checkV = [[checkView alloc]init];
+                [_rightV addSubview:_checkV];
+                [_checkV mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.edges.offset(0);
+                    
+                }];
+                
+                
             }
                 break;
                 

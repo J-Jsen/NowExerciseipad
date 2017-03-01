@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "OrderModel.h"
+
+@protocol Orderdelegate <NSObject>
+
+- (void)OrderprocessingWithModel:(OrderModel *)model andBool:(BOOL)Can;
+
+
+@end
+
 @interface OrderCell : UITableViewCell
 
 
@@ -25,6 +33,10 @@
 @property (nonatomic , strong) UIButton * doOrderBtn;
 @property (nonatomic , strong) UIButton * cantOrderBtn;
 
+@property (nonatomic , strong) UIImageView * imageV;
+
+//代理
+@property (nonatomic , assign) id <Orderdelegate> delegate;
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 

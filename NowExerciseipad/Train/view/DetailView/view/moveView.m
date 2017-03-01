@@ -46,8 +46,10 @@ Arrayproperty(dataArr)
     NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.framework",BASEURL];
     
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
-            NSArray * datarr = data[@"data"];
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            NSArray * datarr = dic[@"data"];
             for (NSDictionary * dic in datarr) {
                 trainModel * model = [[trainModel alloc]init];
                 [model setValuesForKeysWithDictionary:dic];

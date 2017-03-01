@@ -50,7 +50,6 @@
 }
 
 - (void)createCellWithModel:(TeacherModel *)model{
-//    NSLog(@"na:%@",model.username);
     if (model.iselect) {
         [self selectCellwithmodel:model];
     }else{

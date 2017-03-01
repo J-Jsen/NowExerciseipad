@@ -11,6 +11,9 @@
 #import "ClassCell.h"
 #import "FenLeiButton.h"
 #import "FenleiView.h"
+
+#import "CustomButton.h"
+
 @interface ClassViewController ()<UITableViewDelegate,UITableViewDataSource,FenLeidelegate>
 
 @property (nonatomic , strong) UIView * Backgroundview;
@@ -57,8 +60,12 @@ Arrayproperty(deleteFenleiArr)
 - (void)loadData{
     NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.my_training",BASEURL];
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
-           NSArray * datarr = data[@"data"];
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            NSLog(@"data:%@",data);
+            
+            NSArray * datarr = dic[@"data"];
             
             for (NSDictionary * dic in datarr) {
                 ClassModel * model = [[ClassModel alloc]init];
@@ -71,8 +78,8 @@ Arrayproperty(deleteFenleiArr)
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_tableV reloadData];
             });
-        }else if(data[@"msg"]){
-            [HttpRequest showAlertCatController:self andmessage:data[@"msg"]];
+        }else if(dic[@"msg"]){
+            [HttpRequest showAlertCatController:self andmessage:dic[@"msg"]];
         }
     } andfailBlock:^(NSError *error) {
         [HttpRequest showAlertCatController:self andmessage:@"网络错误"];
@@ -91,7 +98,10 @@ Arrayproperty(deleteFenleiArr)
     _tableV = [[UITableView alloc]init];
     _tableV.dataSource = self;
     _tableV.delegate = self;
-    
+    _tableV.bounces = NO;
+
+    _tableV.layer.borderWidth = 1;
+    _tableV.layer.borderColor = LEFTBTN_BACKGROUNDCOLOR.CGColor;
     [_tableV setSeparatorColor:[UIColor clearColor]];
     
     _tableV.backgroundColor = WINDOW_backgroundColor;
@@ -100,10 +110,10 @@ Arrayproperty(deleteFenleiArr)
     
     
     _HeaderView = [[UIView alloc]init];
-    _HeaderView.layer.borderWidth = 1;
-    _HeaderView.layer.borderColor = [UIColor grayColor].CGColor;
-    _HeaderView.layer.cornerRadius = 10;
-    _HeaderView.layer.masksToBounds = YES;
+//    _HeaderView.layer.borderWidth = 1;
+//    _HeaderView.layer.borderColor = [UIColor grayColor].CGColor;
+//    _HeaderView.layer.cornerRadius = 10;
+//    _HeaderView.layer.masksToBounds = YES;
     [_Backgroundview addSubview:_HeaderView];
     
     _TextV = [[UITextView alloc]init];
@@ -113,45 +123,60 @@ Arrayproperty(deleteFenleiArr)
 //    NSArray * family = [UIFont familyNames];
     _TextV.scrollEnabled = YES;
     _TextV.editable = NO;
-    _TextV.layer.cornerRadius = 5;
-    _TextV.layer.masksToBounds = YES;
-    _TextV.layer.borderWidth = 1;
-    _TextV.layer.borderColor = [UIColor grayColor].CGColor;
+//    _TextV.layer.cornerRadius = 5;
+//    _TextV.layer.masksToBounds = YES;
+//    _TextV.layer.borderWidth = 1;
+//    _TextV.layer.borderColor = [UIColor grayColor].CGColor;
     [_Backgroundview addSubview:_TextV];
     
     
 }
 - (void)createHeaderUIWith:(ClassModel *)model{
     [_HeaderView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
-    
+    [_deleteFenleiArr removeAllObjects];
     NSArray * arr = model.plan;
     for (int i = 0; i < arr.count; i ++) {
         if (arr.count == 1) {
-            FenLeiButton * btn = [[FenLeiButton alloc]initWithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) -100) / 2.0 , 5, 100, 40)];
+            CustomButton * btn = [[CustomButton alloc]init];
+//WithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) -100) / 2.0 , 5, 100, 40)];
             [btn addTarget:self action:@selector(show:) forControlEvents:UIControlEventTouchUpInside];
             btn.tag = [[arr[i] valueForKey:@"id"] intValue] + 200;
             [btn setTitle:[arr[i] valueForKey:@"plan_name"] forState:UIControlStateNormal];
-            btn.layer.cornerRadius = 10;
-            btn.layer.masksToBounds = YES;
-            btn.layer.borderWidth = 1;
-            btn.layer.borderColor = [UIColor grayColor].CGColor;
-            
+//            btn.layer.cornerRadius = 10;
+//            btn.layer.masksToBounds = YES;
+//            btn.layer.borderWidth = 1;
+//            btn.layer.borderColor = [UIColor grayColor].CGColor;
+            [btn setTitleColor:WENDA_COLOR forState:UIControlStateNormal];
             [_HeaderView addSubview:btn];
+            [btn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.centerX.offset(0);
+                make.width.mas_equalTo(100);
+                make.height.mas_equalTo(40);
+                make.top.offset(15);
+            }];
             [_deleteFenleiArr addObject:btn];
         }else{
             
-            FenLeiButton * btn = [[FenLeiButton alloc]initWithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) - arr.count * 100)  / (arr.count +1) * (i +1) + 100 * i, 5, 100, 40)];
+            CustomButton * btn = [[CustomButton alloc]init];
+//WithFrame:CGRectMake((CGRectGetWidth(_HeaderView.frame) - arr.count * 100)  / (arr.count +1) * (i +1) + 100 * i, 15, 100, 40)];
             
             [btn addTarget:self action:@selector(show:) forControlEvents:UIControlEventTouchUpInside];
             btn.tag = [[arr[i] valueForKey:@"id"] intValue] + 200;
             [btn setTitle:[arr[i] valueForKey:@"plan_name"] forState:UIControlStateNormal];
-            btn.layer.cornerRadius = 10;
-            btn.layer.masksToBounds = YES;
-            btn.layer.borderWidth = 1;
-            btn.layer.borderColor = [UIColor grayColor].CGColor;
-            
+//            btn.layer.cornerRadius = 10;
+//            btn.layer.masksToBounds = YES;
+//            btn.layer.borderWidth = 1;
+//            btn.layer.borderColor = [UIColor grayColor].CGColor;
+            [btn setTitleColor:WENDA_COLOR forState:UIControlStateNormal];
+
             [_HeaderView addSubview:btn];
+            [btn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.width.mas_equalTo(100);
+                make.height.mas_equalTo(40);
+                make.top.offset(15);
+//                NSLog(@"减去的长度为:%f",(CGRectGetWidth(_HeaderView.frame) / (float)[arr count] - 100) / 2.0);
+                make.right.offset(-(CGRectGetWidth(_HeaderView.frame) / (float)[arr count] - 100) / 2.0).multipliedBy((i+1) / (float)[arr count]);
+            }];
             [_deleteFenleiArr addObject:btn];
             
         }
@@ -209,7 +234,7 @@ Arrayproperty(deleteFenleiArr)
         
     }];
     [_TextV mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.offset(50);
+        make.top.offset(70);
         make.left.offset(170.25/2.0);
         make.right.offset(0);
         make.bottom.offset(0);
@@ -222,8 +247,7 @@ Arrayproperty(deleteFenleiArr)
 - (void)handleDeviceOrientationDidChange:(UIInterfaceOrientation)interfaceOrientation{
 
     if (ISSHUPING) {
-        [self fenleiVdismiss];
-            
+        
         if (_islook) {
             [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L /3.0);
@@ -249,11 +273,9 @@ Arrayproperty(deleteFenleiArr)
             }];
         }
         [self screenChangAnimated];
-        [self createHeaderUIWith:_daraArr[_lastindexpath.row]];
-        
+        [self reloadClassBtn];
 
     }else if(ISHENGPING){
-        [self fenleiVdismiss];
         if (_islook) {
             [_Backgroundview mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
@@ -279,10 +301,31 @@ Arrayproperty(deleteFenleiArr)
             }];
         }
         [self screenChangAnimated];
-        [self createHeaderUIWith:_daraArr[_lastindexpath.row]];
+//        [self createHeaderUIWith:_daraArr[_lastindexpath.row]];
+        [self reloadClassBtn];
 
     }
 }
+
+- (void)reloadClassBtn{
+//    NSLog(@"%ld",_deleteFenleiArr.count);
+    if (_deleteFenleiArr.count == 1) {
+        
+    }else{
+    for (int i = 0; i < _deleteFenleiArr.count; i ++) {
+        CustomButton * btn = _deleteFenleiArr[i];
+        
+        [btn mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.width.mas_equalTo(100);
+            make.height.mas_equalTo(40);
+            make.top.offset(15);
+//            NSLog(@"减去的长度为:%f",(CGRectGetWidth(_HeaderView.frame) / (float)[_deleteFenleiArr count] - 100) / 2.0);
+            make.right.offset(-(CGRectGetWidth(_HeaderView.frame) / (float)[_deleteFenleiArr count] - 100) / 2.0).multipliedBy((i+1) / (float)[_deleteFenleiArr count]);
+        }];
+    }
+    }
+}
+
 - (void)menunoti:(NSNotification *)noti{
     
     NSString * Info = [noti.userInfo valueForKey:@"1"];
@@ -350,19 +393,27 @@ Arrayproperty(deleteFenleiArr)
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)show:(FenLeiButton *)btn{
+- (void)show:(CustomButton *)btn{
     if (!btn.selected) {
         if (_fenleiV) {
             [_fenleiV removeFromSuperview];
-            for (FenLeiButton * btn1 in _deleteFenleiArr) {
+            for (CustomButton * btn1 in _deleteFenleiArr) {
                 if (btn1 != btn) {
                     btn1.selected = NO;
+                    [btn1 disselect];
+                    [btn1 setTitleColor:WENDA_COLOR forState:UIControlStateNormal];
                 }
+                
             }
         }
+        [btn select];
+        [btn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.training&plan_id=%d",BASEURL,(int)(btn.tag - 200)];
         [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-            if (data && [data[@"rc"] integerValue] == 0) {
+            NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+            
+            if (data && [dic[@"rc"] integerValue] == 0) {
 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     _fenleiV = [[FenleiView alloc]init];
@@ -377,10 +428,10 @@ Arrayproperty(deleteFenleiArr)
 
                     [_fenleiV.layer addAnimation:transition forKey:@"animation"];
                     
-                    [_fenleiV createUIWithArr:data[@"data"]];
+                    [_fenleiV createUIWithArr:dic[@"data"]];
 
                     [_fenleiV mas_makeConstraints:^(MASConstraintMaker *make) {
-                        make.top.mas_equalTo(_HeaderView.mas_bottom);
+                        make.top.mas_equalTo(_HeaderView.mas_bottom).offset(10);
                         make.left.mas_equalTo(_tableV.mas_right);
                         make.right.and.bottom.offset(0);
                         
@@ -389,7 +440,7 @@ Arrayproperty(deleteFenleiArr)
                 });
             }else{
                 
-                [HttpRequest showAlertCatController:self andmessage:data[@"msg"]];
+                [HttpRequest showAlertCatController:self andmessage:dic[@"msg"]];
                 
                 
             }
@@ -402,8 +453,9 @@ Arrayproperty(deleteFenleiArr)
     if (_fenleiV) {
         [self fenleiVdismiss];
         
-        for (FenLeiButton * btn1 in _deleteFenleiArr) {
-
+        for (CustomButton * btn1 in _deleteFenleiArr) {
+            [btn1 disselect];
+            [btn1 setTitleColor:WENDA_COLOR forState:UIControlStateNormal];
             btn1.selected = NO;
             
         }
@@ -412,8 +464,12 @@ Arrayproperty(deleteFenleiArr)
     
 }
 #pragma mark 实现分类选项的代理
-- (void)backdata:(NSString *)data{    
+- (void)backdata:(NSString *)data{
+    
     [_fenleiV removeFromSuperview];
+    for (CustomButton * btn in _deleteFenleiArr) {
+        btn.selected = NO; 
+    }
     if (_TextV) {
         _TextV.text = data;
     }

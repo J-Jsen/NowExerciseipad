@@ -20,9 +20,9 @@ Stringproperty(place)//地址
 Stringproperty(course)//课程名字
 Stringproperty(order_type)//订单类别
 Stringproperty(number)//会员点好号码
-
+Intagerproperty(personal_id)//私人订制
 Boolproperty(newOrder)//是否是新订单
 
-
+//Stringproperty(body_id)//身体测试id
 
 @end

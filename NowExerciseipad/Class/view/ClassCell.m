@@ -21,6 +21,7 @@
         _imageV.contentMode = UIViewContentModeScaleAspectFit;
         _label.textColor = WENDA_COLOR;
         _label.font = [UIFont systemFontOfSize:14];
+        _label.textAlignment = NSTextAlignmentCenter;
         
         [self addSubview:_label];
         [self addSubview:_imageV];
@@ -48,13 +49,17 @@
 - (void)creatCellWithClassModel:(ClassModel *)model{
     _model1 = model;
     _label.text = model.train_type;
-    [_imageV setImageWithURL:[NSURL URLWithString:model.icon]];
+    NSLog(@"iconurl:%@",model.icon);
+    
+//    [_imageV setImageWithURL:[NSURL URLWithString:model.icon]];
+    [_imageV setImageWithURL:[NSURL URLWithString:model.icon] placeholderImage:[UIImage imageNamed:@"29"]];
+    
     UIImage * image = _imageV.image;
     image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     _imageV.image = image;
     [_imageV.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
-    _imageV.tintColor = [UIColor yellowColor];
+    _imageV.tintColor = [UIColor orangeColor];
     if (model.isselect) {
         [self changeColor];
     }else{
@@ -65,7 +70,10 @@
 - (void)changeColor{
     
     _label.textColor = [UIColor orangeColor];
-    [_imageV setTintColor:[UIColor blueColor]];
+    UIImage * image = _imageV.image;
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    _imageV.image = image;
+    
     _model1.isselect = YES;
     
     
@@ -73,8 +81,9 @@
 - (void)backColor{
     _model1.isselect = NO;
     _label.textColor = WENDA_COLOR;
-    [_imageV setTintColor:[UIColor yellowColor]];
-    
+    UIImage * image = _imageV.image;
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _imageV.image = image;
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

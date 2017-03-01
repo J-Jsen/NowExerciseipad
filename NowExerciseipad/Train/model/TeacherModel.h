@@ -11,7 +11,7 @@
 @interface TeacherModel : NSObject
 
 Stringproperty(username)
-Intagerproperty(uid)
+Stringproperty(uid)
 Boolproperty(iselect)
 
 @end

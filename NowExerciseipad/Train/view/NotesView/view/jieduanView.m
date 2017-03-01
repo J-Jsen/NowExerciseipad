@@ -43,7 +43,7 @@
         [self addSubview:tableV];
         tableV.backgroundColor = WINDOW_backgroundColor;
         [tableV setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-        
+        tableV.bounces = NO;
         [tableV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.offset(0);
         }];
@@ -52,13 +52,13 @@
     return self;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    NSLog(@"%ld",dataArr.count);
+    //NSLog(@"%ld",dataArr.count);
     
     return dataArr.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"jieduan"];
-    cell.textLabel.text = dataArr[indexPath.row];
+    cell.textLabel.text = dataArr[indexPath.row][@"name"];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
     return cell;
 }

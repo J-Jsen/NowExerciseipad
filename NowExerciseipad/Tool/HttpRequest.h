@@ -24,4 +24,6 @@
 
 + (void)showAlertCatController:(UIViewController *)viewcontroller andmessage:(NSString *)message;
 
++ (CGSize)sizeWithText:(NSString *)text font:(UIFont *)font maxWidth:(CGFloat)width;
+
 @end

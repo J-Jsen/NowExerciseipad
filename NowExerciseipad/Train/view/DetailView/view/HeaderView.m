@@ -39,7 +39,7 @@
         
         [self addSubview:_label];
         [self addSubview:_yuanL];
-        __weak typeof (self) weakSelf = self;
+       // __weak typeof (self) weakSelf = self;
         
         [_yuanL mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.offset(0);

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface OrderViewController : UIViewController
+@property (nonatomic , strong)  UITableView * OrdertableV;
 
+- (void)loaddata;
 
 @end

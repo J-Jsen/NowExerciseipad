@@ -63,8 +63,10 @@ Arrayproperty(dataArr)
 
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
 //        NSLog(@"%@",data);
-        if (data && [data[@"rc"] integerValue] == 0) {
-            NSArray * datarr = data[@"data"];
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            NSArray * datarr = dic[@"data"];
             for (NSDictionary * dic in datarr) {
                 TeacherModel * model = [[TeacherModel alloc]init];
                 [model setValuesForKeysWithDictionary:dic];
@@ -106,6 +108,8 @@ Arrayproperty(dataArr)
         teacherCell * lastcell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:lastinteger inSection:0]];
         
         [lastcell disselectCellwithmodel:_dataArr[lastinteger]];
+        TeacherModel * lastmodel = _dataArr[lastinteger];
+        lastmodel.iselect = NO;
         teacherCell * cell = [_tableV cellForRowAtIndexPath:indexPath];
         lastinteger = indexPath.row;
         [cell selectCellwithmodel:_dataArr[indexPath.row]];
@@ -114,7 +118,8 @@ Arrayproperty(dataArr)
         TeacherModel * model = _dataArr[indexPath.row];
 
         NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
-        [center postNotificationName:@"jiaolian" object:nil userInfo:@{@"uid":@(model.uid)}];
+        
+        [center postNotificationName:@"jiaolian" object:nil userInfo:@{@"uid":model.uid}];
         
     }
     

@@ -7,13 +7,14 @@
 //
 
 #import "DetailOrderViewController.h"
-
+#import "VIPViewController.h"
 #import "GoButton.h"
-#import "firstViewController.h"
+//#import "firstViewController.h"
 
 @interface DetailOrderViewController ()
 
 @property (nonatomic , strong) UIView * backgroundV;
+
 @property (nonatomic , strong) GoButton * GoBtn;
 @property (nonatomic , strong) UILabel * statusLabel;
 
@@ -42,17 +43,10 @@
 
 @implementation DetailOrderViewController
 
+
+
 -(instancetype)init{
-    
     if (self = [super init]) {
-
-        
-    }
-    return self;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleDeviceOrientationDidChanged:)
                                                  name:UIDeviceOrientationDidChangeNotification
@@ -62,15 +56,18 @@
     //菜单栏出现消失通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menunoti:) name:@"xuanxiang" object:nil];
 
-    self.view.backgroundColor = [UIColor yellowColor];
-   
-    [self postgoBtnStatus];
+    self.backgroundColor = WINDOW_backgroundColor;
+    
+//    [self postgoBtnStatus];
 
     _backgroundV = [[UIView alloc]init];
     _backgroundV.backgroundColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
     
-    [self.view addSubview:_backgroundV];
-    self.view.backgroundColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
+    [self addSubview:_backgroundV];
+        [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.offset(0);
+        }];
+    self.backgroundColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
     
     _GoBtn = [[GoButton alloc]init];
     _statusLabel = [[UILabel alloc]init];
@@ -93,14 +90,10 @@
     
     [_backgroundV addSubview:_statusLabel];
     
-    
     [_firstBtn addTarget:self action:@selector(questionnaireClick:) forControlEvents:UIControlEventTouchUpInside];
     [_bordytestBtn addTarget:self action:@selector(BordyClick:) forControlEvents:UIControlEventTouchUpInside];
     [_personBtn addTarget:self action:@selector(personBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [_trainBtn addTarget:self action:@selector(trainBtnclick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
     
     [_backgroundV addSubview:_firstLabel];
     [_backgroundV addSubview:_firstBtn];
@@ -112,28 +105,40 @@
     [_backgroundV addSubview:_trainLabel];
     [_backgroundV addSubview:_updataBtn];
     [_backgroundV addSubview:_chargebackBtn];
-
+        
+        
     [_firstBtn setImage:[UIImage imageNamed:@"16.png"] forState:UIControlStateNormal];
     _firstLabel.text = @"首次问卷";
-    _firstLabel.textColor = [UIColor whiteColor];
+    _firstLabel.textColor = HUISE_TEXT;
     
     [_bordytestBtn setImage:[UIImage imageNamed:@"17.png"] forState:UIControlStateNormal];
     _bordytestLabel.text = @"身体测试";
-    _bordytestLabel.textColor = [UIColor whiteColor];
+    _bordytestLabel.textColor = HUISE_TEXT;
+    
     
     [_personBtn setImage:[UIImage imageNamed:@"18.png"] forState:UIControlStateNormal];
     _personLabel.text = @"私人订制";
-    _personLabel.textColor = [UIColor whiteColor];
+    _personLabel.textColor = HUISE_TEXT;
     
     [_trainBtn setImage:[UIImage imageNamed:@"19.png"] forState:UIControlStateNormal];
     _trainLabel.text = @"教练交接";
-    _trainLabel.textColor = [UIColor whiteColor];
+    _trainLabel.textColor = HUISE_TEXT;
+    _firstBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    _bordytestBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    _personBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    _trainBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
     
-  
+    
     [_updataBtn setTitle:@"上传" forState:UIControlStateNormal];
     _updataBtn.titleLabel.textColor = [UIColor orangeColor];
+    _updataBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _updataBtn.layer.borderWidth = 1;
+    _updataBtn.layer.borderColor = [UIColor orangeColor].CGColor;
+    
     _updataBtn.layer.cornerRadius = 20.0;
     _updataBtn.layer.masksToBounds = YES;
+    
+    [_updataBtn addTarget:self action:@selector(updataBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
 
     _GoBtn.layer.cornerRadius = 130.0;
@@ -144,25 +149,59 @@
     _statusLabel.font = [UIFont systemFontOfSize:27];
     _statusLabel.textAlignment = NSTextAlignmentCenter;
     
-    _statusLabel.textColor = [UIColor whiteColor];
+    _statusLabel.textColor = HUISE_TEXT;
     [_backgroundV addSubview:_GoBtn];
     
-
     [self createUI];
-    
-    
+        
+    }
+    return self;
     
     // Do any additional setup after loading the view.
 }
+//判断是否是私人订制
+- (void)ispersonal{
+    NSString *url =[NSString stringWithFormat:@"%@pad/?method=coach.details&order_id=%@",BASEURL,_orderID];
+    
+    //NSLog(@"url:%@",url);
+    
+    [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+        NSDictionary * dicdata = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        if ([dicdata[@"rc"] integerValue] == 0) {
+            NSDictionary * dic = dicdata[@"data"];
+            NSInteger persona_id = [dic[@"personal_id"] integerValue];
+            
+            if (persona_id) {
+                self.personal_id = [dic[@"personal_id"] integerValue];
+                
+            }else{
+                [self nothavepersonal];
+            }
+            
+        }else{
+            [HttpRequest showAlertCatController:self.window.rootViewController andmessage:dicdata[@"msg"]];
+        }
+    } andfailBlock:^(NSError *error) {
+        [HttpRequest showAlertCatController:self.window.rootViewController andmessage:@"服务器开小差了"];
+    }];
+    
+    
+    
+}
 - (void)postgoBtnStatus{
+    
     NSString * method = [NSString stringWithFormat:@"pad/?method=coach.button&order_id=%@",_orderID];
     NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,method];
     NSLog(@"%@",url);
     
-    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data) {
-            NSLog(@"%@",data);
-           NSDictionary * datadic = data[@"data"];
+    [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+    
+        NSLog(@"数据类型%@",[data class]);
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+//        NSLog(@"dic%@",dic);
+    
+        if (data && [dic[@"rc"] integerValue] == 0) {
+           NSDictionary * datadic = dic[@"data"];
             
             _status = [datadic[@"status"] integerValue];            
             NSDictionary * namedic = datadic[@"name"];
@@ -171,7 +210,6 @@
             
             NSLog(@"%@",namedic[@"name"]);
             dispatch_async(dispatch_get_main_queue(), ^{
-                
                 
                 if (_status == 0) {
                     _statusLabel.text = _statusLabeltxt;
@@ -185,10 +223,7 @@
                     [_GoBtn didEnd];
                     _GoBtn.userInteractionEnabled = NO;
                     _statusLabel.text = _statusLabeltxt;
-                    
                 }
-
-                
             });
             
         }else{
@@ -196,7 +231,7 @@
             UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
             [alertC addAction:action];
             
-            [self presentViewController:alertC animated:YES completion:nil];
+            [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
     
         }
     } andfailBlock:^(NSError *error) {
@@ -204,41 +239,49 @@
         UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
         [alertC addAction:action];
         
-        [self presentViewController:alertC animated:YES completion:nil];
+        [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
 
     }];
 
 }
-- (void)createUI{
-    if (_isopen) {
-        if (ISSHUPING) {//竖屏
-            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.and.left.offset(0);
-                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L / 3.0);
-                make.height.mas_equalTo(UISCREEN_H - 84);
-                
-            }];
-        }else if(ISHENGPING){
-            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.and.left.offset(0);
-                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
-                make.height.mas_equalTo(UISCREEN_H - 84);
-                
-            }];
-        }
+#pragma mark 是否有私人订制
+- (void)nothavepersonal{
+    _personBtn.userInteractionEnabled = NO;
+    UIImage * image = _personBtn.imageView.image;
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    [_personBtn setTintColor:HUISE_TEXT];
+    [_personBtn setImage:image forState:UIControlStateNormal];
+    
+}
 
-    }else{
-            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.and.left.offset(0);
-                make.width.mas_equalTo(UISCREEN_W);
-                make.height.mas_equalTo(UISCREEN_H - 84);
-                
-            }];
-  
-    }
+- (void)createUI{
+//    if (_isopen) {
+//        if (ISSHUPING) {//竖屏
+//            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.top.and.left.offset(0);
+//                make.width.mas_equalTo(UISCREEN_W);
+//                make.height.mas_equalTo(UISCREEN_H - 84);
+//                
+//            }];
+//        }else if(ISHENGPING){
+//            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.top.and.left.offset(0);
+//                make.width.mas_equalTo(UISCREEN_W - LEFT_OPTION_L);
+//                make.height.mas_equalTo(UISCREEN_H - 84);
+//                
+//            }];
+//        }
+//    }else{
+//            [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.top.and.left.offset(0);
+//                make.width.mas_equalTo(UISCREEN_W);
+//                make.height.mas_equalTo(UISCREEN_H - 84);
+//                
+//            }];
+//  
+//    }
             //出发按钮
             [_GoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-    
                 make.centerX.mas_equalTo(0);
                 make.centerY.offset(-150.0);
                 make.width.and.height.mas_equalTo(260);
@@ -311,17 +354,21 @@
         make.height.mas_equalTo(40);
         
     }];
+
+    
+}
+- (void)createUpdataBtn{
     if (_isdone) {
-        
+        _updataBtn.hidden = YES;
     }else{
+        _updataBtn.hidden = NO;
         [_updataBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerX.offset(0);
-            make.centerY.offset(220);
-            make.width.mas_equalTo(60);
+            make.centerY.offset(240);
+            make.width.mas_equalTo(120);
             make.height.mas_equalTo(40);
         }];
     }
-    
     
 }
 - (void)menunoti:(NSNotification *)noti{
@@ -373,13 +420,11 @@
         }];
         
     }
-
-    
 }
 
 - (void)createview{
 
-    _GoBtn.imageV.image = [UIImage imageNamed:@"14"];
+    _GoBtn.imageV.image = [UIImage imageNamed:@"12"];
 
 }
 #pragma mark 出发点击按钮响应事件
@@ -394,11 +439,14 @@
            NSLog(@"%@",url);
            
            [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
-               if (data && [data[@"rc"] integerValue] == 0) {
+               NSDictionary * datadic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+               NSLog(@"%@",datadic);
+               
+               if ([datadic[@"rc"] integerValue] == 0) {
                    NSLog(@"%@",data);
                    [_GoBtn doNew];
                    _statusLabel.text = _statusLabeltxt;
-                   _status = 3;
+                   _status = 2;
                    
                    [self postgoBtnStatus];
                    
@@ -407,7 +455,7 @@
                    UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
                    [alertC addAction:action];
                    
-                   [self presentViewController:alertC animated:YES completion:nil];
+                   [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
     
                }
                
@@ -416,7 +464,7 @@
                UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
                [alertC addAction:action];
                
-               [self presentViewController:alertC animated:YES completion:nil];
+               [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
                
                
            }];
@@ -427,19 +475,21 @@
        [alertC addAction:action];
        [alertC addAction:action1];
        
-       [self presentViewController:alertC animated:YES completion:nil];
+       [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
 
     
-    }else if(_status == 3){
-        
+    }else if(_status == 2){
+//        HttpRequest ps
         UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"您确定要下课吗?" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 
             NSString * url = [NSString stringWithFormat:@"%@%@",BASEURL,_method];
             
             [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
-                if (data && [data[@"rc"] integerValue] == 0) {
-                    NSLog(@"%@",data);
+                NSLog(@"%@",data);
+                NSDictionary * datadic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+                NSLog(@"%@",datadic);
+                if ([datadic[@"rc"] integerValue] == 0) {
                     [_GoBtn didEnd];
                     _GoBtn.userInteractionEnabled = NO;
                     _statusLabel.text = @"已下课";
@@ -449,7 +499,7 @@
                     UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
                     [alertC addAction:action];
                     
-                    [self presentViewController:alertC animated:YES completion:nil];
+                    [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
        
                     
                 }
@@ -458,7 +508,7 @@
                 UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
                 [alertC addAction:action];
                 
-                [self presentViewController:alertC animated:YES completion:nil];
+                [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
        
             }];
 
@@ -467,7 +517,7 @@
         [alertC addAction:action];
         [alertC addAction:action1];
         
-        [self presentViewController:alertC animated:YES completion:nil];
+        [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
         
 
     }
@@ -476,41 +526,95 @@
  
 }
 #pragma mark 点击事件的实现
+//上传数据
+- (void)updataBtnClick:(UIButton *)btn{
+    __weak typeof (self) weakSelf = self;
+
+    UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"你确定要上传么" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSString * url = [NSString stringWithFormat:@"%@pad/?method=coach.upload&order_id=%@",BASEURL,_orderID];
+        [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+            if (data) {
+                NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+                if ([dic[@"rc"] integerValue] == 0) {
+                    [HttpRequest showAlertCatController:weakSelf.window.rootViewController andmessage:@"上传成功"];
+                    weakSelf.detailBlock();
+                    
+                }else{
+                    [HttpRequest showAlertCatController:weakSelf.window.rootViewController andmessage:dic[@"msg"]];
+
+                }
+            }
+        } andfailBlock:^(NSError *error) {
+            [HttpRequest showAlertCatController:weakSelf.window.rootViewController andmessage:@"服务器开小差了"];
+
+        }];
+        
+    }];
+    UIAlertAction * action1 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil];
+    [alertC addAction:action];
+    [alertC addAction:action1];
+    
+    [self.window.rootViewController presentViewController:alertC animated:YES completion:nil];
+    
+}
 //首次问卷
 - (void)questionnaireClick:(UIButton *)btn{
-    firstViewController * firstVC = [[firstViewController alloc]init];
+    VIPViewController * vip = [[VIPViewController alloc]init];
+    vip.titleStr = @"首次问卷";
+    vip.orderID = _orderID;
+    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:vip];
     
-    firstVC.isover = self.isdone;
-    firstVC.order_id = self.orderID;
-    
-    [self presentViewController:firstVC animated:YES completion:nil];
-    
-    
+
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
     
 }
 //身体测试
 - (void)BordyClick:(UIButton *)btn{
+    VIPViewController * vip = [[VIPViewController alloc]init];
+    vip.titleStr = @"身体测试";
+    vip.orderID = _orderID;
+    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:vip];
     
+    
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+ 
     
     
 }
 //私人订制
 - (void)personBtnclick:(UIButton *)btn{
     
+    VIPViewController * vip = [[VIPViewController alloc]init];
     
+    vip.titleStr = @"私人订制";
+    vip.personal_id = _personal_id;
+    
+    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:vip];
+    
+    
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+
     
 }
 //教练交接
 - (void)trainBtnclick:(UIButton *)btn{
     
+    VIPViewController * vip = [[VIPViewController alloc]init];
+    vip.titleStr = @"教练交接";
+    vip.orderID = _orderID;
+    vip.isfinish = _isdone;
     
+    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:vip];
+    
+    
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+
     
     
 }
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
 #pragma mark  移除观察者
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];

@@ -60,7 +60,7 @@
     _nameTF.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     _nameTF.backgroundColor = WINDOW_backgroundColor;
-    _nameTF.clearsOnBeginEditing = YES;
+//    _nameTF.clearsOnBeginEditing = YES;
     _nameTF.borderStyle = UITextBorderStyleBezel;
     _nameTF.layer.borderWidth = 2.0;
     _nameTF.layer.borderColor = LOGINVIEW_COLEOR.CGColor;
@@ -180,15 +180,14 @@
 - (void)Btnclick:(UIButton *)btn{
     
     if (_nameTF.text.length != 0 && _passwordTF.text.length != 0) {
-        NSLog(@"%@*********%@",_nameTF.text,_passwordTF.text);
-        
-    NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",BASEURL,_nameTF.text,[_passwordTF.text MD5]];
+        NSLog(@"账号%@\n密码%@",_nameTF.text,_passwordTF.text);
+        NSString *url = [NSString stringWithFormat:@"%@gdlogin/?number=%@&passwd=%@",BASEURL,_nameTF.text,[_passwordTF.text MD5]];
         NSLog(@"%@",url);
-    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:^(NSProgress * progress) {
-    } andsuccessBlock:^(id data) {
+        [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+        NSLog(@"data的数据格式:%@",[data class]);
         if (data) {
             NSLog(@"数据:%@",data);
-            NSDictionary * dic = (NSDictionary *)data;
+            NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             NSInteger rc = [[dic valueForKey:@"rc"] integerValue];
             NSString * msg = dic[@"msg"];
             if (rc == 0) {
@@ -219,7 +218,6 @@
         UIAlertController * alertC = [UIAlertController alertControllerWithTitle:@"温馨提示" message:@"账号和密码不能为空" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
         [alertC addAction:action];
-        
         [self presentViewController:alertC animated:YES completion:nil];
         
     }
@@ -227,9 +225,7 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-
 }
-
 -(void)dealloc{
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];

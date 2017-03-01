@@ -16,11 +16,12 @@
 #import "PerformanceViewController.h"
 
 #import "PersonalView.h"//个人信息
-
-@interface MainViewController ()<NavViewdelegate>
+#import "searchView.h"
+@interface MainViewController ()<NavViewdelegate,UITextFieldDelegate>
 {
     UIView * navPushView;
-    
+    UIView * searchBackgrondView;
+    searchView * searchV;
 }
 @property (nonatomic ,strong) NavView * navV;
 //右方主视图
@@ -57,7 +58,6 @@
     [self createUI];
     [self loaddata];
     
-    
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -69,6 +69,8 @@
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil
      ];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(PushMessage) name:@"neworder" object:nil];
+    
 }
 
 #pragma mark 布局
@@ -78,9 +80,11 @@
     
     [_navV.menuBtn addTarget:self action:@selector(MenuBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [_navV.IconBtn addTarget:self action:@selector(IconBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    _navV.searchTF.delegate = self;
+    [_navV.searchBtn addTarget:self action:@selector(searchBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [_navV.messageBtn addTarget:self action:@selector(PushMessageBtnClick) forControlEvents:UIControlEventTouchUpInside];
     
     _orderVC = [[OrderViewController alloc]init];
-    
    
     _OptionV = [[UIView alloc]init];
     _mainV = [[UIView alloc]init];
@@ -94,8 +98,8 @@
     _PerformanceBtn = [[OptionBtn alloc]initWithName:@"绩效" andWithImageName:@"7.png"];
     
     _OrderBtn.selected = YES;
-    _OrderBtn.imageV.image = [UIImage imageNamed:@"16.png"];
-    _OrderBtn.titleLabel.textColor = [UIColor orangeColor];
+    _OrderBtn.imageV.image = [UIImage imageNamed:@"8.png"];
+    _OrderBtn.Classtitlelabel.textColor = [UIColor orangeColor];
 
     //分割线
     
@@ -123,31 +127,19 @@
     _TrainBtn.tag = 300;
     _PerformanceBtn.tag = 400;
     
-    
-    
     [_OrderBtn addTarget:self action:@selector(btnclick:) forControlEvents:UIControlEventTouchUpInside];
     [_ClassBtn addTarget:self action:@selector(btnclick:) forControlEvents:UIControlEventTouchUpInside];
     [_TrainBtn addTarget:self action:@selector(btnclick:) forControlEvents:UIControlEventTouchUpInside];
     [_PerformanceBtn addTarget:self action:@selector(btnclick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-
     
     [_OptionV addSubview:_OrderBtn];
     [_OptionV addSubview:_ClassBtn];
     [_OptionV addSubview:_TrainBtn];
     [_OptionV addSubview:_PerformanceBtn];
     
-    
-    
-    
-    
     [_OptionV addSubview:_line1];
     [_OptionV addSubview:_line2];
     [_OptionV addSubview:_line3];
-
-
-//    [_mainV addSubview:login.view];
 
     [self masonryUI];
 
@@ -181,7 +173,6 @@
             make.bottom.mas_equalTo(0);
             make.right.mas_equalTo(0);
         }];
-        
         
         //**************************分别布局********************
         
@@ -231,7 +222,6 @@
             make.left.mas_equalTo(2);
             make.right.mas_equalTo(-2);
             make.height.mas_equalTo(1);
-            
         }];
         
         [_PerformanceBtn mas_makeConstraints :^(MASConstraintMaker *make) {
@@ -318,10 +308,6 @@
             make.height.mas_equalTo(LEFT_OPTION_L);
             
         }];
-        
-
-        
-        
     }
     
     [[UIApplication sharedApplication] statusBarOrientation];
@@ -336,8 +322,11 @@
 //    http://192.168.1.5/pad/?method=coach.personal_info
     
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
-            NSDictionary * datadic = data[@"data"];
+        NSLog(@"数据%@",data);
+        NSLog(@"%@",[data class]);
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            NSDictionary * datadic = dic[@"data"];
             NSUserDefaults * defults = [NSUserDefaults standardUserDefaults];
             [defults setObject:datadic[@"uid"] forKey:@"uid"];
             [defults setObject:datadic[@"class_times"] forKey:@"classtime"];
@@ -364,26 +353,20 @@
 
 #pragma mark 通知的处理
 - (void)handleDeviceOrientationDidChange:(UIInterfaceOrientation)interfaceOrientation{
-    __weak typeof (self) weakSelf = self;
-
+    //__weak typeof (self) weakSelf = self;
         [_navV mas_updateConstraints:^(MASConstraintMaker *make) {
-            
             make.top.mas_equalTo(0);
             make.left.mas_equalTo(0);
             make.right.mas_equalTo(0);
             make.height.mas_equalTo(84.0);
-                    
         }];
     
     [self changeUI];
-
     NSLog(@"转屏了");
-    
 
 }
 
 - (void)changeUI{
-    
     if (ISHENGPING) {
         
             if (_isopen) {
@@ -416,9 +399,6 @@
                     make.bottom.mas_equalTo(0);
                     make.right.mas_equalTo(0);
                 }];
-                
-                
-
                
             }
             
@@ -499,8 +479,6 @@
                     make.bottom.mas_equalTo(0);
                     make.right.mas_equalTo(0);
                 }];
-                
-                
 
             }else{
                 [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -517,61 +495,44 @@
                     make.bottom.mas_equalTo(0);
                     make.right.mas_equalTo(0);
                 }];
-                
-                
-
             }
             //**************************分别布局********************
-            
             [_OrderBtn mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(0);
                 make.left.mas_equalTo(0);
                 make.right.mas_equalTo(0);
                 make.height.mas_equalTo(LEFT_OPTION_L);
-                
             }];
-            
             [_line1 mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(_OrderBtn.mas_bottom);
                 make.left.mas_equalTo(2);
                 make.right.mas_equalTo(-2);
                 make.height.mas_equalTo(1);
-                
             }];
-            
             [_ClassBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                
                 make.top.mas_equalTo(_line1.mas_bottom);
                 make.left.mas_equalTo(0);
                 make.right.mas_equalTo(0);
                 make.height.mas_equalTo(LEFT_OPTION_L);
-                
             }];
-            
             [_line2 mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(_ClassBtn.mas_bottom);
                 make.left.mas_equalTo(2);
                 make.right.mas_equalTo(-2);
                 make.height.mas_equalTo(1);
-                
             }];
-            
             [_TrainBtn mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(_line2.mas_bottom);
                 make.left.mas_equalTo(0);
                 make.right.mas_equalTo(0);
                 make.height.mas_equalTo(LEFT_OPTION_L);
-                
-                
             }];
             [_line3 mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(_TrainBtn.mas_bottom);
                 make.left.mas_equalTo(2);
                 make.right.mas_equalTo(-2);
                 make.height.mas_equalTo(1);
-                
             }];
-            
             [_PerformanceBtn mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(_line3.mas_bottom);
                 make.left.mas_equalTo(0);
@@ -579,14 +540,9 @@
                 make.height.mas_equalTo(LEFT_OPTION_L);
                 
             }];
-            
-            
     }
-    
 //动画
     [self screenChangAnimated];
-    
-    
 }
 #pragma 左方选项点击事件
 - (void)btnclick:(OptionBtn *)btn{
@@ -598,7 +554,7 @@
     switch (btn.tag) {
         case 100://点击了订单按钮
         {
-            btn.imageV.image = [UIImage imageNamed:@"16.png"];
+            btn.imageV.image = [UIImage imageNamed:@"8.png"];
            
             _ClassBtn.imageV.image = [UIImage imageNamed:@"6.png"];
             _TrainBtn.imageV.image = [UIImage imageNamed:@"1.png"];
@@ -612,11 +568,8 @@
                     optionbtn = Btnarr[i];
                     optionbtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
                 }
-                
             }
             [_mainV bringSubviewToFront:_orderVC.view];
-            
-            
         }
             break;
         case 200://课程
@@ -634,7 +587,6 @@
                     optionbtn = Btnarr[i];
                     optionbtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
                 }
-                
             }
             if (_classVC) {
                 [_mainV bringSubviewToFront:_classVC.view];
@@ -689,7 +641,6 @@
                     optionbtn = Btnarr[i];
                     optionbtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
                 }
-                
             }
             if (_performanceVC) {
                 [_mainV bringSubviewToFront:_performanceVC.view];
@@ -698,10 +649,7 @@
                 _performanceVC.islook = _isopen;
                 
                 [_mainV addSubview:_performanceVC.view];
-                
             }
-            
-
         }
             break;
             
@@ -711,57 +659,32 @@
         
     }else{
 //btn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
-        
-        
         switch (btn.tag) {
             case 100://点击了订单按钮
             {
-
-
-            
-                
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"detailorderdismiss" object:nil];
+                btn.selected = NO;
             }
                 break;
             case 200://课程
                 btn.selected = NO;
-                
-
-
-               
-                
-                
                 break;
             case 300://培训
-                
-
-                
                 break;
             case 400://绩效
-                
-                
-
-                
-
                 break;
-                
             default:
                 break;
         }
-        
-        
-        
     }
     
      btn.selected = !btn.selected;
-    
-    
 }
 #pragma mark 实现菜单按钮代理方法
 
 - (void)MenuBtnclick:(UIButton *)btn{
     btn.selected = !btn.selected;
     NSNotificationCenter * center = [NSNotificationCenter defaultCenter];
-    
     if (!btn.selected) {
         [btn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
         [center postNotificationName:@"xuanxiang" object:nil userInfo:@{@"1":@"出现"}];
@@ -770,9 +693,12 @@
         if (navPushView) {
             [navPushView removeFromSuperview];
             _navV.IconBtn.userInteractionEnabled = YES;
-            
         }
-        
+        if (searchBackgrondView) {
+            [searchBackgrondView removeFromSuperview];
+            searchV = nil;
+            _navV.searchTF.text = @"";
+        }
         NSLog(@"菜单出现");
         
     }else{
@@ -785,10 +711,36 @@
     }
     [self handleDeviceOrientationDidChange:[[UIApplication sharedApplication] statusBarOrientation]];
 
- 
-    
-    
 }
+#pragma mark 推送消息通知
+- (void)PushMessage{
+    [_orderVC loaddata];
+
+}
+#pragma mark 消息按钮点击事件
+- (void)PushMessageBtnClick{
+    if (_orderVC) {
+        NSLog(@"刷新了订单视图");
+        [_orderVC.OrdertableV.mj_header beginRefreshing];
+        
+        _OrderBtn.imageV.image = [UIImage imageNamed:@"8.png"];
+        _OrderBtn.Classtitlelabel.textColor = [UIColor orangeColor];
+        
+        _ClassBtn.imageV.image = [UIImage imageNamed:@"6.png"];
+        _TrainBtn.imageV.image = [UIImage imageNamed:@"1.png"];
+        _PerformanceBtn.imageV.image = [UIImage imageNamed:@"7.png"];
+        _ClassBtn.selected = NO;
+        _TrainBtn.selected = NO;
+        _PerformanceBtn.selected = NO;
+        _ClassBtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
+        _TrainBtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
+        _PerformanceBtn.Classtitlelabel.textColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
+        
+        [_mainV bringSubviewToFront:_orderVC.view];
+
+    }
+}
+
 #pragma mark 头像点击事件
 - (void)IconBtnClick:(iconBtn *)btn{
     navPushView = [[UIView alloc]init];
@@ -814,6 +766,44 @@
     btn.userInteractionEnabled = NO;
     
 }
+#pragma mark 搜索框代理
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    if (textField == _navV.searchTF) {
+        if (searchV) {
+        }else{
+            searchBackgrondView = [[UIView alloc]init];
+            [self.view addSubview:searchBackgrondView];
+            [searchBackgrondView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.offset(80);
+                make.left.and.right.and.bottom.offset(0);
+            }];
+        searchV = [[searchView alloc]init];
+        [searchBackgrondView addSubview:searchV];
+        [searchV mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.offset(0);
+        }];
+        _navV.menuBtn.selected = NO;
+        [self MenuBtnclick:_navV.menuBtn];
+        }
+        
+        if (searchV.detaiV) {
+            [searchV.detaiV removeFromSuperview];
+        }
+    }
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    if (textField == _navV.searchTF) {
+
+    }
+}
+#pragma mark 搜索按钮点击事件
+- (void)searchBtnClick:(UIButton *)btn{
+    if (searchV) {
+        [searchV seturlWithString:_navV.searchTF.text];
+        [_navV.searchTF resignFirstResponder];
+        
+    }
+}
 #pragma mark 选项栏消失
 - (void)Opetiondismiss{
 
@@ -831,14 +821,9 @@
         make.bottom.mas_equalTo(0);
         make.right.mas_equalTo(0);
     }];
-
-    
     [self screenChangAnimated];
-    
-    
 }
 #pragma mark 选项栏出现
-
 - (void)OpetionOut{
     
     if (ISSHUPING) {
@@ -855,12 +840,8 @@
             make.bottom.mas_equalTo(0);
             make.right.mas_equalTo(0);
         }];
-        
-        
-        
            }else if(ISHENGPING){
 
-      
         [_OptionV mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_navV.mas_bottom);
             make.left.mas_equalTo(0);
@@ -884,6 +865,7 @@
 - (void)dealloc{
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"neworder" object:nil];
 
 }
 

@@ -54,10 +54,17 @@ Arrayproperty(dataArr)
     return self;
 }
 - (void)updata{
+    
+    __weak typeof (self) weakSelf = self;
+
+    
     NSString * url = [NSString stringWithFormat:@"%@pad/?method=train.all_content",BASEURL];
-    [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
-            NSArray * datarr = data[@"data"];
+    [HttpRequest GetHttpwithUrl:url parameters:nil andsuccessBlock:^(id data) {
+
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            NSArray * datarr = dic[@"data"];
 //            NSLog(@"%@",data);
             for (NSDictionary * dic in datarr) {
                 NSMutableArray * subtitleArr = [NSMutableArray array];
@@ -66,8 +73,13 @@ Arrayproperty(dataArr)
                 for (NSDictionary * dic in subArr) {
                     detailModel * model = [[detailModel alloc]init];
                     [model setValuesForKeysWithDictionary:dic];
-                    CGRect r = [model.content boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.frame), 0) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"ArialUnicodeMS" size:17.1]} context:nil];
-                    model.label_heiht = r.size.height + 46;
+
+                    NSString * te = dic[@"content"];
+                    NSLog(@"%@",te);
+                    CGSize r = [weakSelf sizeWithText:te font:[UIFont systemFontOfSize:17] maxWidth:CGRectGetWidth(weakSelf.frame)];
+//                    CGRect r = [te boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.frame), MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Arial Unicode MS" size:17.1]} context:nil];
+                    
+                    model.label_heiht = r.height + 46;
 
                     [subtitleArr addObject:model];
                     
@@ -95,6 +107,17 @@ Arrayproperty(dataArr)
         
     }];
 }
+
+/// 根据指定文本,字体和最大宽度计算尺寸
+- (CGSize)sizeWithText:(NSString *)text font:(UIFont *)font maxWidth:(CGFloat)width
+{
+    NSMutableDictionary *attrDict = [NSMutableDictionary dictionary];
+    attrDict[NSFontAttributeName] = font;
+    CGSize size = [text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:attrDict context:nil].size;
+    return size;
+}
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
     trainModel * model = _dataArr[section];

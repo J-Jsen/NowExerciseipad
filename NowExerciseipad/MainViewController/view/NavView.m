@@ -17,7 +17,7 @@
         _IconBtn = [[iconBtn alloc]init];
         _searchTF = [[UITextField alloc]init];
         _searchBtn = [[UIButton alloc]init];
-        _messageBtn = [[UIButton alloc]init];
+        _messageBtn = [[MessageButton alloc]init];
         
         _searchTF.backgroundColor = LEFTBTN_BACKGROUNDCOLOR;
         _searchTF.clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -30,17 +30,17 @@
         _searchTF.textColor = [UIColor whiteColor];
         
         UIButton * btn = [_searchTF valueForKey:@"_clearButton"];
-        [btn setImage:[UIImage imageNamed:@"1"] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"clear.png"] forState:UIControlStateNormal];
         _searchTF.leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 10, 0)];
         _searchTF.leftViewMode = UITextFieldViewModeAlways;
-        
-        
+ 
+        NSAttributedString * placeholder = [[NSAttributedString alloc]initWithString:@"搜索" attributes:@{NSForegroundColorAttributeName:[UIColor grayColor],NSFontAttributeName:_searchTF.font}];
+       _searchTF.attributedPlaceholder = placeholder;
         [_searchBtn setImage:[UIImage imageNamed:@"search.png"] forState:UIControlStateNormal];
         
-        
         [_messageBtn setImage:[UIImage imageNamed:@"message.png"] forState:UIControlStateNormal];
-        [_menuBtn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
         
+        [_menuBtn setImage:[UIImage imageNamed:@"caidanopen.png"] forState:UIControlStateNormal];
         
         _menuBtn.imageView.contentMode = UIViewContentModeLeft;
         
@@ -110,7 +110,7 @@
 }
 
 - (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 
 }
 /*

@@ -12,6 +12,7 @@
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key{
     if ([key isEqualToString:@"process"]) {
+        NSLog(@"%@",key);
         if ([value isEqualToString:@"true"]) {
             self.Process = YES;
         }else{

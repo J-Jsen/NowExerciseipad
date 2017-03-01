@@ -43,7 +43,7 @@
     // Initialization code
 }
 - (void)createCellWithModel:(AddNotesModel *)model{
-    NSLog(@"model%ld",model.result);
+    //NSLog(@"model%ld",model.result);
     
     self.backgroundColor = WINDOW_backgroundColor;
     Addmodel = model;
@@ -59,16 +59,16 @@
     
     
     [_resultSeg setSelectedSegmentIndex:Addmodel.result];
-    NSLog(@"%ld",Addmodel.result);
+   // NSLog(@"%ld",Addmodel.result);
     _saveBtn.layer.cornerRadius = 5;
     _saveBtn.layer.masksToBounds = YES;
     
     _jieduanBtn.layer.cornerRadius = 5;
-    _jieduanBtn.layer.borderWidth = 1;
+    _jieduanBtn.layer.borderWidth = 2;
     _jieduanBtn.layer.borderColor = WENDA_COLOR.CGColor;
 
     _dayBtn.layer.cornerRadius = 5;
-    _dayBtn.layer.borderWidth = 1;
+    _dayBtn.layer.borderWidth = 2;
     _dayBtn.layer.borderColor = WENDA_COLOR.CGColor;
     
     _jieduanL.text = Addmodel.jieduan;
@@ -76,11 +76,15 @@
     
     jieduanArr = [NSMutableArray array];
     for (NSDictionary * dic in Addmodel.dataArr) {
-        [jieduanArr addObject:dic[@"name"]];
+        NSDictionary * dict = @{@"name":dic[@"name"],@"framework_id":dic[@"framework_id"]};
+        
+        [jieduanArr addObject:dict];
         
     }
     NSMutableArray * arr = Addmodel.dataArr[0][@"subtitel"];
     dayArr = [NSMutableArray arrayWithArray:arr];
+    
+    _nameTF.text = Addmodel.name;
     
     
 }
@@ -88,7 +92,7 @@
     
     UISegmentedControl * seg = (UISegmentedControl *)sender;
     NSInteger selectI = seg.selectedSegmentIndex;
-    NSLog(@"选中了:%ld",selectI);
+  //  NSLog(@"选中了:%ld",selectI);
     Addmodel.result = selectI;
     
     

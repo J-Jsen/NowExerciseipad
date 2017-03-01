@@ -19,7 +19,7 @@
     
     sharemanager.requestSerializer.timeoutInterval = 10;
     sharemanager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/html",@"text/json",@"text/javascript", @"text/plain", nil];
-    
+    [sharemanager.requestSerializer setValue:@"1.0.0" forHTTPHeaderField:@"appVersion"];
     return sharemanager;
     
     
@@ -61,18 +61,16 @@
             // 1.创建管理者对象
         AFHTTPSessionManager * manager = [HttpRequest sharemanager];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    
-[manager GET:url parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
+    [manager GET:url parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
    
-} success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
     
-    successBlock(responseObject);
+        successBlock(responseObject);
 
-} failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
     
-    failBlock(error);
-    
-}];
+        failBlock(error);
+    }];
   
     
 }
@@ -80,18 +78,6 @@
 + (void)PostHttpwithUrl:(NSString *)url andparameters:(NSDictionary *)parameters andProgress:(void(^)(NSProgress *progress))progress andsuccessBlock:(void(^)(id data))successBlock andfailBlock:(void(^)(NSError * error))failBlock{
     
     AFHTTPSessionManager * manager = [HttpRequest sharemanager];
-//    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-
-//    [manager POST:url parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-//        
-//    } progress:^(NSProgress * _Nonnull uploadProgress) {
-//        progress(uploadProgress);
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        successBlock(responseObject);
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        failBlock(error);
-//    }];
-//    
     
     [manager POST:url parameters:nil progress:^(NSProgress * _Nonnull uploadProgress) {
         progress(uploadProgress);
@@ -111,7 +97,7 @@
 //上传本地文件
 //+ (void)Postlocalfilewithurl:(NSString *)url andparameters:(NSDictionary *)parameters and
 
-
+//无事件提示框
 + (void)showAlertCatController:(UIViewController *)viewcontroller andmessage:(NSString *)message{
     
     
@@ -126,7 +112,14 @@
     
 }
 
-
+/// 根据指定文本,字体和最大宽度计算尺寸
++ (CGSize)sizeWithText:(NSString *)text font:(UIFont *)font maxWidth:(CGFloat)width
+{
+    NSMutableDictionary *attrDict = [NSMutableDictionary dictionary];
+    attrDict[NSFontAttributeName] = font;
+    CGSize size = [text boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:attrDict context:nil].size;
+    return size;
+}
 
 
 

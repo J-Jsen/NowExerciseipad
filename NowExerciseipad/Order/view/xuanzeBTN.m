@@ -20,8 +20,7 @@
         _label.textColor = [UIColor whiteColor];
         _label.text = message;
         _label.font = [UIFont systemFontOfSize:20];
-        
-#warning 图片
+
         _imageV.image = [UIImage imageNamed:@"12.png"];
         
         

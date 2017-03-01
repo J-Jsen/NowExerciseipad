@@ -94,30 +94,33 @@
 }
 
 - (void)reloadData{
-    __weak __typeof__(self) weakSelf = self;
+    //__weak __typeof__(self) weakSelf = self;
 
     [_dataArr removeAllObjects];
-    
 
     NSString * Durl = [NSString stringWithFormat:@"%@pad/?method=train.framework",BASEURL];
     [HttpRequest PostHttpwithUrl:Durl andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
             
             AddNotesModel * model1 = [[AddNotesModel alloc]init];
             
             model1.result = 0;
-            model1.dataArr  = data[@"data"];
+            model1.dataArr  = dic[@"data"];
             NSDictionary * dic = model1.dataArr[0];
             model1.classID = [dic[@"subtitel"][0][@"id"] integerValue];
             
             model1.jieduan = [dic valueForKey:@"name"];
             model1.dayL = [dic[@"subtitel"][0] valueForKey:@"name"];
+            model1.name = [[NSUserDefaults standardUserDefaults] valueForKey:@"username"];
+            
             [_dataArr setObject:model1 atIndexedSubscript:0];
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_tableV reloadData];
             });
-            NSLog(@"changdu : %ld",_dataArr.count);
+            //NSLog(@"changdu : %ld",_dataArr.count);
         }else{
             NSLog(@"大纲加载失败");
         }
@@ -126,8 +129,10 @@
         
     }];
     [HttpRequest PostHttpwithUrl:url andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue]== 0) {
-            NSArray * datarr = data[@"data"];
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue]== 0) {
+            NSArray * datarr = dic[@"data"];
             for (NSDictionary * dic in datarr) {
                 NotesModel * model = [[NotesModel alloc]init];
                 [model setValuesForKeysWithDictionary:dic];
@@ -135,7 +140,7 @@
                 
             }
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"%ld",_dataArr.count);
+                //NSLog(@"%ld",_dataArr.count);
                 [_tableV reloadData];
                 
             });
@@ -199,44 +204,57 @@
 }
 - (void)AddBtnclick:(AddNotesModel *)model{
     
+//    NSUserDefaults * defults = [NSUserDefaults standardUserDefaults];
+//    NSString * username = [defults valueForKey:@"username"];
     
-    NSUserDefaults * defults = [NSUserDefaults standardUserDefaults];
-    NSString * username = [defults valueForKey:@"username"];
-//    NSDate *datenow =[NSDate dateWithTimeIntervalSinceNow:0];
-//    
-//    NSTimeZone *zone = [NSTimeZone systemTimeZone];
-//    
-    NSInteger interval = [[NSDate date] timeIntervalSince1970] * 1000;
 
-    NSLog(@"%ld",interval);
     
+    if (![model.name isEqualToString:@""]) {
+    NSString * username = model.name;
+    //NSLog(@"username:%@",username);
+    NSInteger interval = [[NSDate date] timeIntervalSince1970];
     
     username = [username stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
-    NSString * beizhu = [model.beizhu stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
-    NSString * fankui = [model.fankui stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
-    NSString * qingkuang = [model.qingkuang stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
-   
-
-    NSString * updataurl = [NSString stringWithFormat:@"%@pad/?method=train.recard&content_id=%ld&coach_id=%ld&training_coach=%@&remark=%@&result=%ld&feedback=%@&progress=%@&time=%ld",BASEURL,model.classID,studentID,username,beizhu,model.result,fankui,qingkuang,interval];
+        
+        NSString * beizhu;
+        if ([model.beizhu isEqualToString:@""]) {
+            beizhu = @"";
+        }else{
+            beizhu = [model.beizhu stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
+        }
+        NSString * fankui;
+        if ([model.fankui isEqualToString:@""]) {
+            fankui = @"";
+        }else{
+        fankui = [model.fankui stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
+        }
+        NSString * qingkuang;
+        if ([model.qingkuang isEqualToString:@""]) {
+            qingkuang = @"";
+        }else{
+            qingkuang = [model.qingkuang stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet illegalCharacterSet]];
+        }
+    NSString * updataurl = [NSString stringWithFormat:@"%@pad/?method=train.recard&content_id=%ld&coach_id=%ld&training_coach=%@&remark=%@&result=%ld&feedback=%@&progress=%@&time=%ld",BASEURL,(long)model.classID,(long)studentID,username,beizhu,(long)model.result,fankui,qingkuang,interval];
 //    NSInteger  ina = time(NULL);
-    NSLog(@"$$$$$$$$$$%@",updataurl);
-    
-//    NSString * u = [updataurl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSLog(@"*******%@",u);
     
     [HttpRequest PostHttpwithUrl:updataurl andparameters:nil andProgress:nil andsuccessBlock:^(id data) {
-        if (data && [data[@"rc"] integerValue] == 0) {
-            NSLog(@"上传成功");
+        NSMutableDictionary * dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
+        if (data && [dic[@"rc"] integerValue] == 0) {
+            [HttpRequest showAlertCatController:self.window.rootViewController andmessage:@"保存成功"];
             [self reloadData];
             
         }else{
-            NSLog(@"上传失败");
+            [HttpRequest showAlertCatController:self.window.rootViewController andmessage:dic[@"msg"]];
         }
     } andfailBlock:^(NSError *error) {
-        NSLog(@"服务器出错");
+        [HttpRequest showAlertCatController:self.window.rootViewController andmessage:@"服务器开小差了,请稍后尝试..."];
         
     }];
-    NSLog(@"%@\n %@\n %ld",model.fankui,model.beizhu,model.classID);
+    NSLog(@"%@\n %@\n %ld",model.fankui,model.beizhu,(long)model.classID);
+    }else{
+        [HttpRequest showAlertCatController:self.window.rootViewController andmessage:@"培训人不能为空"];
+    }
     
 }
 

@@ -8,6 +8,14 @@
 
 #import "OrderCell.h"
 
+@interface OrderCell()
+{
+    NSString * orderID;
+    OrderModel * orderModel;
+    
+}
+@end
+
 @implementation OrderCell
 
 
@@ -24,7 +32,9 @@
         _classtypeLabel = [[UILabel alloc]init];
         _backgroundV = [[UIView alloc]init];
         
-        _nameLabel.font = [UIFont systemFontOfSize:20.0];
+        _imageV = [[UIImageView alloc]init];
+        
+        _nameLabel.font = [UIFont systemFontOfSize:32];
         _backgroundV.layer.borderWidth = 3.0;
         _backgroundV.layer.cornerRadius = 6.0;
         _backgroundV.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -52,6 +62,8 @@
         [_backgroundV addSubview:_phonenumberLabel];
         [_backgroundV addSubview:_StatusLabel];
         [_backgroundV addSubview:_classtypeLabel];
+        [_backgroundV addSubview:_imageV];
+        
         self.backgroundColor = LEFTBTNTEXT_BACKGROUNDCOLOR;
         
    
@@ -69,16 +81,14 @@
     [_backgroundV mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.and.left.mas_equalTo(20.0);
         make.right.mas_equalTo(-20.0);
-        
-        make.height.mas_equalTo(125.0);
+        make.height.mas_equalTo(145);
         
     }];
     //名字
     [_nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.and.left.mas_equalTo(20);
-        make.width.mas_equalTo(80.0);
+        make.width.mas_equalTo(140);
         make.height.mas_equalTo(30.0);
-        
         
     }];
     //性别
@@ -108,7 +118,7 @@
     }];
     //电话
     [_phonenumberLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_nameLabel.mas_bottom).offset(10.0);
+        make.top.mas_equalTo(_nameLabel.mas_bottom).offset(20);
         make.left.offset(20);
         make.width.mas_equalTo(200);
         make.height.mas_equalTo(25);
@@ -116,7 +126,7 @@
     }];
     //类型(上门)
     [_classtypeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_StatusLabel.mas_bottom).offset(10.0);
+        make.top.mas_equalTo(_StatusLabel.mas_bottom).offset(20);
         make.right.offset(-20.0);
         make.width.mas_equalTo(100);
         make.height.mas_equalTo(25.0);
@@ -124,7 +134,7 @@
     }];
     //地址
     [_placeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_phonenumberLabel.mas_bottom).offset(10.0);
+        make.top.mas_equalTo(_phonenumberLabel.mas_bottom).offset(20);
         make.left.offset(20.0);
         make.width.mas_equalTo(400);
         make.height.mas_equalTo(25);
@@ -132,23 +142,29 @@
     }];
     //上课时间
     [_onclasstimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(_classtypeLabel.mas_bottom).offset(10.0);
+        make.top.mas_equalTo(_classtypeLabel.mas_bottom).offset(15);
         make.right.offset(-20.0);
         make.width.mas_equalTo(220.0);
         make.height.mas_equalTo(25);
         
     }];
+    [_imageV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.and.top.offset(0);
+        make.width.and.height.mas_equalTo(30);
+    }];
     
 }
 - (void)createCellWithmodel:(OrderModel *)model{
     _nameLabel.text = model.name;
+    orderID = model.order_id;
+    orderModel = model;
+    
     if ([model.gender integerValue] == 2) {
         _sexLabel.text = @"男";
     }else{
         _sexLabel.text = @"女";
     }
     _classnameLabel.text = [NSString stringWithFormat:@"%@%@",@"课程:",model.course];
-
     
     if (model.newOrder) {
         _doOrderBtn = [[UIButton alloc]init];
@@ -157,34 +173,62 @@
         [self addSubview:_doOrderBtn];
         [self addSubview:_cantOrderBtn];
         
+        [_doOrderBtn addTarget:self action:@selector(doOrderClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_cantOrderBtn addTarget:self action:@selector(cantOrderClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        
+        
+        [_doOrderBtn setTitle:@"接  单" forState:UIControlStateNormal];
+        [_cantOrderBtn setTitle:@"拒  绝" forState:UIControlStateNormal];
+        [_doOrderBtn setTitleColor:[UIColor colorWithRed:192 / 255.0f green:57 / 255.0f blue:43 / 255.0f alpha:1] forState:UIControlStateNormal];
+        [_cantOrderBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
+        _doOrderBtn.layer.cornerRadius = 20;
+        _doOrderBtn.layer.masksToBounds = YES;
+        _doOrderBtn.layer.borderColor = [UIColor colorWithRed:192 / 255.0f green:57 / 255.0f blue:43 / 255.0f alpha:1].CGColor;
+        _doOrderBtn.layer.borderWidth = 2;
+        _doOrderBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+        
+        _cantOrderBtn.layer.cornerRadius = 20;
+        _cantOrderBtn.layer.masksToBounds = YES;
+        _cantOrderBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+        _cantOrderBtn.layer.borderWidth = 2;
+        _cantOrderBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+
+        
         _StatusLabel.text = @"新订单";
-        _StatusLabel.textColor = [UIColor orangeColor];
-        _backgroundV.layer.borderColor = [UIColor orangeColor].CGColor;
+        _StatusLabel.textColor = [UIColor colorWithRed:176 / 255.0f green:38 / 255.0f blue:33 / 255.0f alpha:1];
+        _backgroundV.layer.borderColor = [UIColor colorWithRed:192 / 255.0f green:57 / 255.0f blue:43 / 255.0f alpha:1].CGColor;
+        _imageV.image = [UIImage imageNamed:@"neworder.png"];
         
         
         [_doOrderBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.and.right.offset(20);
-            make.width.mas_equalTo(50);
-            make.height.mas_equalTo(25);
+            make.bottom.and.right.offset(-20);
+            make.width.mas_equalTo(100);
+            make.height.mas_equalTo(40);
             
         }];
         [_cantOrderBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.offset(20);
-            make.right.mas_equalTo(_doOrderBtn.mas_left).offset(20);
-            make.width.mas_equalTo(50);
-            make.height.mas_equalTo(25);
+            make.bottom.offset(-20);
+            make.right.mas_equalTo(_doOrderBtn.mas_left).offset(-20);
+            make.width.mas_equalTo(100);
+            make.height.mas_equalTo(40);
             
         }];
         
     }else if(model.Process){
         _StatusLabel.text = @"已完成";
         _StatusLabel.textColor = [UIColor whiteColor];
-        
+        _backgroundV.layer.borderColor = [UIColor colorWithRed:198 / 255.0f green:195/255.0f blue:199/255.0f alpha:1].CGColor;
+
+        _imageV.image = [UIImage imageNamed:@"doneorder.png"];
+
     }else{
         _StatusLabel.text = @"进行中...";
         _StatusLabel.textColor = [UIColor orangeColor];
-        _backgroundV.layer.borderColor = [UIColor orangeColor].CGColor;
-        
+        _backgroundV.layer.borderColor = [UIColor colorWithRed:211 / 255.0f green:84 / 255.0f blue:0 / 255.0f alpha:1].CGColor;
+        _imageV.image = [UIImage imageNamed:@"onorder.png"];
+
     }
     _placeLabel.text = [NSString stringWithFormat:@"%@%@",@"地址:",model.place];
     _classtypeLabel.text = [NSString stringWithFormat:@"%@%@",@"类型:",model.order_type];
@@ -201,6 +245,19 @@
 
 
 }
+
+- (void)doOrderClick:(UIButton *)btn{
+    if (self.delegate) {
+        [self.delegate OrderprocessingWithModel:orderModel andBool:YES];
+    }
+}
+- (void)cantOrderClick:(UIButton *)btn{
+    
+    if (self.delegate) {
+        [self.delegate OrderprocessingWithModel:orderModel andBool:NO];
+    }
+}
+
 
 - (void)awakeFromNib {
     [super awakeFromNib];

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "iconBtn.h"
-
+#import "MessageButton.h"
 @protocol NavViewdelegate <NSObject>
 
 - (void)MenuBtnclick:(UIButton *)btn;
@@ -23,7 +23,7 @@
 @property (nonatomic , strong) iconBtn * IconBtn;//头像按钮
 @property (nonatomic , strong) UITextField * searchTF; //搜索框
 @property (nonatomic , strong) UIButton * searchBtn;//搜索按钮
-@property (nonatomic , strong) UIButton * messageBtn;//消息按钮
+@property (nonatomic , strong) MessageButton * messageBtn;//消息按钮
 
 @property  (nonatomic , strong) id<NavViewdelegate> delegate;
 
